@@ -48,6 +48,12 @@ function love.keypressed(key, scancode, isrepeat)
   end
 end
 
+function love.mousemoved(x, y)
+  if (main_state_machine:current_state().mouse_moved) then
+    main_state_machine:current_state():mouse_moved(x, y)
+  end
+end
+
 function love.resize(w, h)
   push:resize(w, h)
   if (main_state_machine:current_state().resize) then

@@ -37,4 +37,8 @@ function in_game:key_pressed(key, scancode, isrepeat)
   self.world:emit("key_pressed", key, scancode, isrepeat)
 end
 
+function in_game:mouse_moved(x, y)
+  self.world:emit("mouse_moved", x, y)
+end
+
 return in_game

@@ -29,7 +29,7 @@ end
 local sqrt3 = math.sqrt(3)
 
 -- This is to make it "prettier" as the sprites should overlap a bit as there is perspective built in to the sprite
-local verticalOffset = 4
+local verticalOffset = 0
 
 -- luacheck: ignore
 local function flat_hex_to_pixel(hex, hexSize)
@@ -39,16 +39,43 @@ local function flat_hex_to_pixel(hex, hexSize)
   return x,y
 end
 
-local function pixel_to_pointy_hex(x, y, hexSize)
-  local q = (sqrt3/3*x - 1/3 * y) / hexSize
-  local r = (2/3 * y) / hexSize
+local function hex_round(q, r)
+  local s = -q -r
 
-  return q,r
+  local round_q = math.floor(q+0.5)
+  local round_r = math.floor(r+0.5)
+  local round_s = math.floor(s+0.5)
+
+  local q_diff = math.abs(round_q - q)
+  local r_diff = math.abs(round_r - r)
+  local s_diff = math.abs(round_s - s)
+
+  if (q_diff > r_diff and q_diff > s_diff) then
+    round_q = -round_r - round_s
+  elseif (r_diff > s_diff) then
+    round_r = -round_q - round_s
+  else
+    round_s = -round_q - round_r
+  end
+
+  return round_q, round_r, round_s
+end
+
+local function pixel_to_pointy_hex(x, y, hexSize)
+  local hexSizeX = hexSize
+  local hexSizeY = hexSize - verticalOffset
+  local q = (sqrt3/3 * x - 1/3 * y) / hexSizeX
+  local r = (2/3 * y) / hexSizeY
+
+  return hex_round(q, r)
 end
 
 local function pointy_hex_to_pixel(hex, hexSize)
-  local x = hexSize * (sqrt3 * hex.q + sqrt3/2 * hex.r)
-  local y = hexSize * (3/2 * hex.r) * (hexSize / (hexSize + verticalOffset))
+  local hexSizeX = hexSize
+  local hexSizeY = hexSize - verticalOffset
+
+  local x = hexSizeX * (sqrt3 * hex.q + sqrt3/2 * hex.r)
+  local y = hexSizeY * (3/2 * hex.r)
 
   return x,y
 end
@@ -72,17 +99,30 @@ local Map = Class {
   draw = function(self)
     for _, tile in ipairs(self.grid) do
       local x,y = pointy_hex_to_pixel(tile, self.hexSize)
-      love.graphics.draw(hexagonSprite, x + self.x, y + self.y)
+      if tile.selected then
+        love.graphics.setColor(1,0.2,0.8)
+        y = y - 4
+      end
+      love.graphics.draw(hexagonSprite, x + self.x, y + self.y, 0, 1, 1, self.hexSize, self.hexSize)
+      love.graphics.setColor(1,1,1)
     end
   end,
 
   getHexFromPixelCoords = function(self, x, y)
-    local q, r = pixel_to_pointy_hex(x, y, self.hexSize)
+    if not x or not y then return nil end
+    local q, r = pixel_to_pointy_hex(x-self.x, y-self.y, self.hexSize)
+    print("q, r", q, r)
     -- TODO: Save the grid also as a simple [q+r] hash table so we can avoid this silly looping
     for _, hex in ipairs(self.grid) do
       if q == hex.q and r == hex.r then
         return hex
       end
+    end
+  end,
+
+  update = function(self)
+    for _, hex in ipairs(self.grid) do
+      hex.selected = false
     end
   end
 }
