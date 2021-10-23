@@ -13,7 +13,7 @@ function GridSystem:update()
   local screenX, screenY = push:toGame(mouseX, mouseY)
 
   local hex = self.map:getHexFromPixelCoords(screenX, screenY)
-  print(mouseX, mouseY, hex)
+  --print(mouseX, mouseY, hex)
   if hex then
     hex.selected = true
   end
