@@ -144,7 +144,7 @@ local Map = Class {
         love.graphics.setColor(1,0.2,0.8)
         y = y - 4
       end
-      love.graphics.draw(hexagonSprite, x, y, 0, 1, 1, self.hexSize, self.hexSize)
+      love.graphics.draw(hexagonSprite, math.floor(x), math.floor(y), 0, 1, 1, spriteSize/2, spriteSize/2)
       love.graphics.setColor(1,1,1)
     end
   end,
