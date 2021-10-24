@@ -162,6 +162,11 @@ local Map = Class {
     end
   end,
 
+  getPixelCoordsFromHex = function(self, hex)
+    local x1, y1 = pointy_hex_to_pixel(hex, self.hexSize, self.x, self.y)
+    return x1, y1
+  end,
+
   update = function(self)
     for _, hex in ipairs(self.grid) do
       hex.selected = false

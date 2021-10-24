@@ -6,6 +6,7 @@ local layers = {
   {
     name = "world",
     camera_tansform = true,
+    z_sorted = true,
     entities = {}
   },
   {
@@ -42,17 +43,25 @@ end
 --   --self.canvas = love.graphics.newCanvas(love.graphics.getDimensions())
 -- end
 
+local function zSort(a, b)
+  return a.position.y < b.position.y
+end
+
 function SpriteSystem:draw()
-  --love.graphics.clear(0.13, 0.15, 0.10)
 
   for _, layer in ipairs(layers) do
     love.graphics.push()
+
+    if layer.z_sorted then
+      table.stable_sort(layer.entities, zSort)
+    end
 
     if layer.camera_tansform and self.camera then
       local active_camera = functional.find_match(self.camera, function(cam_entity) return cam_entity.camera.active end)
       if active_camera then
         local camX, camY = active_camera.position.x, active_camera.position.y
-        local w, h = push:getDimensions()
+        --local w, h = push:getDimensions()
+        local w, h = love.graphics:getDimensions()
         love.graphics.translate((-camX+w/2), (-camY+h/2))
       end
     end
@@ -81,7 +90,7 @@ function SpriteSystem:draw()
           love.graphics.draw(entity.sprite.value, entity.sprite.quad, position.x, position.y, rotate, scale, scale, w*originX, h*originY)
         else
           local width, height = entity.sprite.value:getDimensions()
-          love.graphics.draw(entity.sprite.value, position.x, position.y, rotate, scale, scale, width*originX, height*originY)
+          love.graphics.draw(entity.sprite.value, math.floor(position.x), math.floor(position.y), rotate, scale, scale, width*originX, height*originY)
         end
       end
 

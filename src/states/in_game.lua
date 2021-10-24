@@ -7,7 +7,7 @@ function in_game:load_game(_)
   self.world_height = 480
   self.world = Concord.world()
 
-  self.world:addSystems( ECS.s.grid, ECS.s.draw )
+  self.world:addSystems( ECS.s.input, ECS.s.place_character, ECS.s.is_in_hex, ECS.s.grid, ECS.s.sprite)
   self.map = Map(320, 240, 6)
 
   self.world:emit("initialize_map_entities")
@@ -28,7 +28,7 @@ function in_game:update(dt)
 end
 
 function in_game:draw()
-  love.graphics.clear(0.1, 0, 0, 1)
+  love.graphics.clear(0.13, 0.15, 0.10)
   self.world:emit("draw")
 end
 
@@ -39,6 +39,10 @@ end
 
 function in_game:mouse_moved(x, y)
   self.world:emit("mouse_moved", x, y)
+end
+
+function in_game:mouse_pressed(x, y, button)
+  self.world:emit("mouse_pressed", x, y, button)
 end
 
 return in_game

@@ -10,7 +10,7 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 local windowWidth, windowHeight = love.window.getDesktopDimensions()
 windowWidth, windowHeight = windowWidth*.7, windowHeight*.7 --make the window a bit smaller than the screen itself
 
-push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = false})
+push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = true})
 
 -- Enable require without specifying 'src' in the beginning
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";src/?.lua")
@@ -51,6 +51,12 @@ end
 function love.mousemoved(x, y)
   if (main_state_machine:current_state().mouse_moved) then
     main_state_machine:current_state():mouse_moved(x, y)
+  end
+end
+
+function love.mousepressed(x, y, button)
+  if (main_state_machine:current_state().mouse_pressed) then
+    main_state_machine:current_state():mouse_pressed(x, y, button)
   end
 end
 
