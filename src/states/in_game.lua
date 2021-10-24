@@ -1,15 +1,15 @@
-local in_game = {}
+local Map = require 'models.map'
 
--- local function generate_map()
---   return {}
--- end
+local in_game = {}
 
 function in_game:load_game(_)
   self.world_width = 640
   self.world_height = 480
   self.world = Concord.world()
 
-  self.world:addSystems( ECS.s.grid )
+  self.world:addSystems( ECS.s.grid, ECS.s.draw )
+  self.map = Map(320, 240, 6)
+
   self.world:emit("initialize_map_entities")
 end
 

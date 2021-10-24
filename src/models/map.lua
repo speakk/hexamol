@@ -130,8 +130,9 @@ local Map = Class {
     self.hexSize = tileSize
 
     table.sort(self.grid, function(a, b)
-      local _, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
-      local _, y2 = pointy_hex_to_pixel(b, tileSize, self.x, self.y)
+      local x1, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
+      local x2, y2 = pointy_hex_to_pixel(b, tileSize, self.x, self.y)
+      if y1 == y2 then return x1 < x2 end
       return y1 < y2
     end)
 
