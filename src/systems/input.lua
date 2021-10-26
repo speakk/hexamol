@@ -36,7 +36,7 @@ end
 
 function InputSystem:mouse_pressed(x, y, button)
   -- button HAPPENS to correspond to team number (1 or 2) so we use it directly here
-  self:getWorld():emit("place_character", x, y, button)
+  self:getWorld():emit("handle_click", x, y, button)
 end
 
 return InputSystem
