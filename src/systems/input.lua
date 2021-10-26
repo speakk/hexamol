@@ -1,6 +1,11 @@
 local InputSystem = Concord.system({})
 
 local keyMap = {
+  {
+    key = "space",
+    event = "player_end_turn",
+    singlePress = true
+  }
 }
 
 local repeatKeys = {}
@@ -30,10 +35,8 @@ function InputSystem:key_pressed(key)
 end
 
 function InputSystem:mouse_pressed(x, y, button)
-  print("button", button)
-  if (button == 1) then
-    self:getWorld():emit("place_character", x, y)
-  end
+  -- button HAPPENS to correspond to team number (1 or 2) so we use it directly here
+  self:getWorld():emit("place_character", x, y, button)
 end
 
 return InputSystem
