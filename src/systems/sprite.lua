@@ -1,5 +1,7 @@
 local push = require "libs.push.push"
 
+local outlineShader = love.graphics.newShader('src/shaders/outline.fs')
+
 local SpriteSystem = Concord.system({ pool = {"position", "layer"}, camera = {"camera", "position" } })
 
 local layers = {
@@ -89,8 +91,22 @@ function SpriteSystem:draw()
           local _, _, w, h = entity.sprite.quad:getViewport()
           love.graphics.draw(entity.sprite.value, entity.sprite.quad, position.x, position.y, rotate, scale, scale, w*originX, h*originY)
         else
-          local width, height = entity.sprite.value:getDimensions()
-          love.graphics.draw(entity.sprite.value, math.floor(position.x), math.floor(position.y), rotate, scale, scale, width*originX, height*originY)
+          local w, h = entity.sprite.value:getDimensions()
+
+          -- TODO: Move this outside this else statement
+          if (entity.selected) then
+            love.graphics.setShader(outlineShader)
+            local thickness = 1
+            if outlineShader:hasUniform("stepSize") then
+              outlineShader:send( "stepSize",{thickness/w,thickness/h} )
+            end
+          end
+
+          love.graphics.draw(entity.sprite.value, math.floor(position.x), math.floor(position.y), rotate, scale, scale, w*originX, h*originY)
+        end
+
+        if (entity.selected) then
+          love.graphics.setShader()
         end
       end
 
