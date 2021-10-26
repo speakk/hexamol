@@ -128,6 +128,7 @@ local Map = Class {
     self.x = x
     self.y = y
     self.hexSize = tileSize
+    self.entities = {}
 
     table.sort(self.grid, function(a, b)
       local x1, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
@@ -165,6 +166,28 @@ local Map = Class {
   getPixelCoordsFromHex = function(self, hex)
     local x1, y1 = pointy_hex_to_pixel(hex, self.hexSize, self.x, self.y)
     return x1, y1
+  end,
+
+  addEntityToHex = function(self, entity, hex)
+    self.entities[entity] = hex
+  end,
+
+  removeEntity = function(self, entity)
+    table.remove(self.entities[entity])
+  end,
+
+  getRandomFreeHex = function(self)
+    local shuffledHexes = table.shuffle(table.copy(self.grid))
+    for _, hex in ipairs(shuffledHexes) do
+      local foundEntity = false
+      for _, entity in ipairs(self.entities) do
+        if entity.is_in_hex.hex == hex then
+          foundEntity = true
+        end
+      end
+
+      if not foundEntity then return hex end
+    end
   end,
 
   update = function(self)

@@ -8,7 +8,9 @@ function MapClickHandlerSystem:handle_map_click(hex)
   end)
 
   if entity_exists_in_hex then
-    self:getWorld():emit("select_entity", entity_exists_in_hex)
+    if entity_exists_in_hex.is_in_team.teamEntity == team then
+      self:getWorld():emit("select_entity", entity_exists_in_hex)
+    end
   elseif #(self.selected) > 0 then
     self:getWorld():emit("move_entities", self.selected, hex)
   else

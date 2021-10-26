@@ -2,6 +2,7 @@ require "libs.batteries":export()
 Concord = require "libs.concord"
 inspect = require "libs.inspect"
 vector = require "libs.hump.vector-light"
+tick = require "libs.tick"
 
 local push = require "libs.push.push"
 
@@ -39,6 +40,7 @@ local main_state_machine = state_machine(states)
 main_state_machine:set_state("in_game")
 
 function love.update(dt)
+  tick.update(dt)
   main_state_machine:update(dt)
 end
 

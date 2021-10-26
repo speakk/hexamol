@@ -1,5 +1,5 @@
 local push = require 'libs.push.push'
-local GridSystem = Concord.system({})
+local GridSystem = Concord.system({ in_map = { "is_in_hex" } })
 
 function GridSystem:init(world)
   --self.canvas = love.graphics.newCanvas(push:getDimensions())
@@ -10,6 +10,15 @@ function GridSystem:init(world)
     :give("position")
     :give("origin", 0, 0)
     :give("layer", "world")
+
+  self.in_map.entityAdded = function(_, entity)
+    local hex = entity.is_in_hex.hex
+    states.in_game.map:addEntityToHex(entity, hex)
+  end
+
+  self.in_map.entityRemoved = function(_, entity)
+    states.in_game.map:removeEntity(entity)
+  end
 end
 
 function GridSystem:update()

@@ -10,7 +10,7 @@ function in_game:load_game(_)
   self.world:addSystems(  ECS.s.input, ECS.s.player_input, ECS.s.click_handler, ECS.s.map_click_handler,
                           ECS.s.turn, ECS.s.ai, ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character,
                           ECS.s.is_in_hex,
-                          ECS.s.grid, ECS.s.sprite)
+                          ECS.s.grid, ECS.s.sprite, ECS.s.debug)
   self.map = Map(320, 240, 6)
 
   self.world:emit("initialize_map_entities")
