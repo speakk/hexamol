@@ -13,13 +13,14 @@ function PlaceCharacterSystem:place_character(hex, team)
     sprite = characterSprite2
   end
 
-  Concord.entity(self:getWorld())
+  local entity = Concord.entity(self:getWorld())
     :give("position")
-    :give("is_in_hex", hex)
     :give("sprite", sprite)
     :give("origin", 0.5, 1)
     :give("layer", "world")
     :give("is_in_team", team)
+
+  self:getWorld():emit("place_entity_in_hex", entity, hex)
 end
 
 return PlaceCharacterSystem

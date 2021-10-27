@@ -8,5 +8,17 @@ function IsInHexSystem:update()
   end
 end
 
+function IsInHexSystem:place_entity_in_hex(entity, targetHex)
+  if entity.is_in_hex then
+    self:getWorld():emit("remove_entity_from_hex", entity)
+  end
+
+  entity:give("is_in_hex", targetHex)
+end
+
+function IsInHexSystem.remove_entity_from_hex(_, entity)
+  entity:remove("is_in_hex")
+end
+
 return IsInHexSystem
 
