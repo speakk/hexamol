@@ -4,7 +4,7 @@ local hexagonSprite = love.graphics.newImage("media/hexagon.png")
 local spriteSize = 32
 local tileSize = spriteSize / 2 * 1.1
 
-local hexTile = Class {
+local Hex = Class {
   init = function(self, q, r)
     -- q: column, r: row
     self.q = q
@@ -19,12 +19,17 @@ local function createGrid(radius)
     local r1 = math.max(-radius, -q - radius)
     local r2 = math.min(radius, -q + radius)
     for r = r1,r2 do
-      table.insert(map, hexTile(q, r))
+      table.insert(map, Hex(q, r))
     end
   end
 
   return map
 end
+
+local neighbor_directions = {
+  Hex(1, 0), Hex(1, -1), Hex(0, -1),
+  Hex(-1, 0), Hex(-1, 1), Hex(0, 1),
+}
 
 local sqrt3 = math.sqrt(3)
 
@@ -146,6 +151,10 @@ local Map = Class {
         love.graphics.setColor(1,0.2,0.8)
         y = y - 4
       end
+
+      if tile.hilight_path then
+        love.graphics.setColor(0.6,1.0,0.4)
+      end
       love.graphics.draw(hexagonSprite, math.floor(x), math.floor(y), 0, 1, 1, spriteSize/2, spriteSize/2)
       love.graphics.setColor(1,1,1)
     end
@@ -166,6 +175,15 @@ local Map = Class {
   getPixelCoordsFromHex = function(self, hex)
     local x1, y1 = pointy_hex_to_pixel(hex, self.hexSize, self.x, self.y)
     return x1, y1
+  end,
+
+  getHex = function(self, q, r)
+    -- TODO: Save the grid also as a simple [q+r] hash table so we can avoid this silly looping
+    for _, hex in ipairs(self.grid) do
+      if q == hex.q and r == hex.r then
+        return hex
+      end
+    end
   end,
 
   addEntityToHex = function(self, entity, hex)
@@ -190,9 +208,23 @@ local Map = Class {
     end
   end,
 
+  getHexNeighbors = function(self, hex, include_occupied)
+    local neighbors = {}
+    for _, direction in ipairs(neighbor_directions) do
+      local neighborHex = self:getHex(hex.q + direction.q, hex.r + direction.r)
+      table.insert(neighbors, neighborHex)
+    end
+
+    return neighbors
+  end,
+
   update = function(self)
+  end,
+
+  frameStart = function(self)
     for _, hex in ipairs(self.grid) do
       hex.selected = false
+      hex.hilight_path = false
     end
   end
 }

@@ -1,4 +1,5 @@
 local Map = require 'models.map'
+local PathFinder = require 'models.path_finder'
 
 local in_game = {}
 
@@ -9,9 +10,11 @@ function in_game:load_game(_)
 
   self.world:addSystems(  ECS.s.input, ECS.s.player_input, ECS.s.click_handler, ECS.s.map_click_handler,
                           ECS.s.turn, ECS.s.ai, ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character,
-                          ECS.s.is_in_hex,
+                          ECS.s.is_in_hex, ECS.s.path_finding,
                           ECS.s.grid, ECS.s.sprite, ECS.s.debug)
+
   self.map = Map(320, 240, 6)
+  self.path_finder = PathFinder(self.map)
 
   self.world:emit("initialize_map_entities")
 end

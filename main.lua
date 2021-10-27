@@ -1,5 +1,6 @@
 require "libs.batteries":export()
 Concord = require "libs.concord"
+Class = require "libs.hump.class"
 inspect = require "libs.inspect"
 vector = require "libs.hump.vector-light"
 tick = require "libs.tick"
