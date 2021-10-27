@@ -24,7 +24,7 @@ local PathFinder = Class {
 
     -- Return all neighbor nodes. Means a target that can be moved from the current node
     function map.get_neighbors(_, hex, from_hex)
-      return gamestate_map:getHexNeighbors(hex, true)
+      return gamestate_map:getHexNeighbors(hex, false)
     end
 
     -- Cost of two adjacent nodes.

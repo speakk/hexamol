@@ -10,12 +10,14 @@ function GridSystem:init(world)
     :give("origin", 0, 0)
     :give("layer", "world")
 
-  self.in_map.entityAdded = function(_, entity)
+  self.in_map.onAdded = function(_, entity)
+    print("Adding...")
     local hex = entity.is_in_hex.hex
     states.in_game.map:addEntityToHex(entity, hex)
   end
 
-  self.in_map.entityRemoved = function(_, entity)
+  self.in_map.onRemoved = function(_, entity)
+    print("Removing...")
     states.in_game.map:removeEntity(entity)
   end
 end

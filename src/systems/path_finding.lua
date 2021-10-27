@@ -5,7 +5,9 @@ function PathFindingSystem:init()
     --print("entityAdded?")
     -- TODO: Threaded / coroutines?
     local path = states.in_game.path_finder:find_path(entity.wants_path.from, entity.wants_path.to)
-    entity:give("has_path", path)
+    if path then
+      entity:give("has_path", path)
+    end
     entity:remove("wants_path")
     --print("Gave path", inspect(path))
   end
