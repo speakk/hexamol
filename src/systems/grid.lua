@@ -15,8 +15,8 @@ function GridSystem.place_entity_in_hex(_, entity, targetHex)
   states.in_game.map:addEntityToHex(entity, targetHex)
 end
 
-function GridSystem.remove_entity_from_hex(_, entity)
-  states.in_game.map:removeEntity(entity)
+function GridSystem.remove_entity_from_hex(_, _, hex)
+  states.in_game.map:removeEntityFromHex(hex)
 end
 
 function GridSystem:update()

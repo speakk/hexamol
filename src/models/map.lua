@@ -126,6 +126,16 @@ local function pixel_to_pointy_hex(x, y, hexSize, originX, originY)
   return hex_round(q, r)
 end
 
+local function coordinatesToIndex(q, r)
+  return q*1000 + r
+end
+
+local function indexToCoordinates(index)
+  local q = math.floor(index/1000)
+  local r = index - q * 1000
+
+  return q, r
+end
 
 local Map = Class {
   init = function(self, x, y, radius)
@@ -134,6 +144,12 @@ local Map = Class {
     self.y = y
     self.hexSize = tileSize
     self.entities = {}
+
+    self.gridHash = {}
+
+    for _, hex in ipairs(self.grid) do
+      self.gridHash[coordinatesToIndex(hex.q, hex.r)] = hex
+    end
 
     table.sort(self.grid, function(a, b)
       local x1, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
@@ -163,13 +179,7 @@ local Map = Class {
   getHexFromPixelCoords = function(self, x, y)
     if not x or not y then return nil end
     local q, r = pixel_to_pointy_hex(x, y, self.hexSize, self.x, self.y)
-    --print("q, r", q, r)
-    -- TODO: Save the grid also as a simple [q+r] hash table so we can avoid this silly looping
-    for _, hex in ipairs(self.grid) do
-      if q == hex.q and r == hex.r then
-        return hex
-      end
-    end
+    return self:getHex(q,r)
   end,
 
   getPixelCoordsFromHex = function(self, hex)
@@ -178,20 +188,15 @@ local Map = Class {
   end,
 
   getHex = function(self, q, r)
-    -- TODO: Save the grid also as a simple [q+r] hash table so we can avoid this silly looping
-    for _, hex in ipairs(self.grid) do
-      if q == hex.q and r == hex.r then
-        return hex
-      end
-    end
+    return self.gridHash[coordinatesToIndex(q, r)]
   end,
 
   addEntityToHex = function(self, entity, hex)
-    self.entities[entity] = hex
+    self.entities[coordinatesToIndex(hex.q, hex.r)] = entity
   end,
 
-  removeEntity = function(self, entity)
-    table.remove(self.entities[entity])
+  removeEntityFromHex = function(self, hex)
+    self.entities[coordinatesToIndex(hex.q, hex.r)] = nil
   end,
 
   getRandomFreeHex = function(self)
@@ -203,25 +208,19 @@ local Map = Class {
   end,
 
   isHexOccupied = function(self, hex)
-    --print("Check isHexOccupied")
-    -- TODO: Dear lord also index by q and r
-    for entity, entityHex in pairs(self.entities) do
-      --print("Checking hex...", entity, entityHex, hex)
-      if entityHex == hex then
-        --print("Was occupied")
-        return entity
-      end
-    end
+    return self.entities[coordinatesToIndex(hex.q, hex.r)]
   end,
 
   getHexNeighbors = function(self, hex, include_occupied)
     local neighbors = {}
     for _, direction in ipairs(neighbor_directions) do
       local neighborHex = self:getHex(hex.q + direction.q, hex.r + direction.r)
-      local isHexOccupied = self:isHexOccupied(neighborHex)
-      --if isHexOccupied then print("hex was occupied") end
-      if include_occupied or not isHexOccupied then
-        table.insert(neighbors, neighborHex)
+      if neighborHex then
+        local isHexOccupied = self:isHexOccupied(neighborHex)
+        --if isHexOccupied then print("hex was occupied") end
+        if include_occupied or not isHexOccupied then
+          table.insert(neighbors, neighborHex)
+        end
       end
     end
 

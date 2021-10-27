@@ -10,13 +10,13 @@ end
 
 function IsInHexSystem:place_entity_in_hex(entity, targetHex)
   if entity.is_in_hex then
-    self:getWorld():emit("remove_entity_from_hex", entity)
+    self:getWorld():emit("remove_entity_from_hex", entity, entity.is_in_hex.hex)
   end
 
   entity:give("is_in_hex", targetHex)
 end
 
-function IsInHexSystem.remove_entity_from_hex(_, entity)
+function IsInHexSystem.remove_entity_from_hex(_, entity, _)
   entity:remove("is_in_hex")
 end
 
