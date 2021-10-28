@@ -15,13 +15,13 @@ function AiSystem:run_ai_turn(teamEntity)
   -- TODO: Make it do stuff!
 
   local randomHex = states.in_game.map:getRandomFreeHex()
-  self:getWorld():emit("take_turn_action", teamEntity, {
-    event_name = turn_actions.place_character.event_name,
-    event_options = {
+  self:getWorld():emit("take_turn_action", teamEntity,
+    turn_actions.place_character,
+    {
       target_hex = randomHex,
       team = teamEntity
     }
-  })
+  )
 
   local aiEntities = self:getAiEntities()
   if aiEntities then
@@ -35,7 +35,7 @@ function AiSystem:run_ai_turn(teamEntity)
   end
 
   tick.delay(function()
-    self:getWorld():emit("end_turn", teamEntity)
+    self:getWorld():emit("take_turn_action", teamEntity, turn_actions.end_turn)
   end, 2)
 end
 

@@ -6,10 +6,11 @@ function TurnSystem.init(_, world)
   Concord.entity(world):give("team", "ai"):give("ai_controlled")
 end
 
-function TurnSystem:end_turn(teamEntity)
-  teamEntity:remove("current_turn")
+function TurnSystem:end_turn()
+  local current_team = self.current_turn[1]
+  current_team:remove("current_turn")
 
-  local current_index = table.index_of(self.pool, teamEntity)
+  local current_index = table.index_of(self.pool, current_team)
   local next_turn_index = math.wrap(current_index + 1, 1, #(self.pool)+1)
 
   local next_turn = self.pool[next_turn_index]
