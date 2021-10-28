@@ -1,3 +1,4 @@
+local turn_actions = require 'models.turn_actions'
 local AiSystem = Concord.system({ ai_teams = { "team", "ai_controlled" }, pool = { "is_in_team" }})
 
 function AiSystem:getAiEntities()
@@ -14,7 +15,13 @@ function AiSystem:run_ai_turn(teamEntity)
   -- TODO: Make it do stuff!
 
   local randomHex = states.in_game.map:getRandomFreeHex()
-  self:getWorld():emit("place_character", randomHex, teamEntity)
+  self:getWorld():emit("take_turn_action", teamEntity, {
+    event_name = turn_actions.place_character.event_name,
+    event_options = {
+      target_hex = randomHex,
+      team = teamEntity
+    }
+  })
 
   local aiEntities = self:getAiEntities()
   if aiEntities then

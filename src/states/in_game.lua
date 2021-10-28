@@ -8,10 +8,12 @@ function in_game:load_game(_)
   self.world_height = 480
   self.world = Concord.world()
 
-  self.world:addSystems(  ECS.s.input, ECS.s.player_input, ECS.s.click_handler, ECS.s.map_click_handler,
-                          ECS.s.turn, ECS.s.ai, ECS.s.path_hilight, ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character,
-                          ECS.s.is_in_hex, ECS.s.path_finding,
-                          ECS.s.grid, ECS.s.sprite, ECS.s.debug)
+  self.world:addSystems(
+    ECS.s.input, ECS.s.player_input, ECS.s.click_handler, ECS.s.map_click_handler,
+    ECS.s.turn, ECS.s.turn_action, ECS.s.ai, ECS.s.path_hilight, ECS.s.select_entity,
+    ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex, ECS.s.path_finding,
+    ECS.s.grid, ECS.s.sprite, ECS.s.debug
+  )
 
   self.map = Map(320, 240, 6)
   self.path_finder = PathFinder(self.map)

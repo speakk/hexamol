@@ -15,6 +15,9 @@ function TurnSystem:end_turn(teamEntity)
   local next_turn = self.pool[next_turn_index]
   next_turn:give("current_turn")
 
+  -- TODO: Currently flush is needed to make sure "current turn" is
+  -- on the correct entity. Figure out a way out of this.
+  self:getWorld():__flush()
   self:getWorld():emit("turn_starts", next_turn)
 end
 
