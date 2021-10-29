@@ -30,8 +30,8 @@ function AttackSystem:perform_attack(options)
     damage = 50
   })
 
-  local finalPosX = math.lerp(by.position.x, against.position.x, 0.5)
-  local finalPosY = math.lerp(by.position.y, against.position.y, 0.5)
+  local finalPosX = (by.position.x + against.position.x) / 2
+  local finalPosY = (by.position.y + against.position.y) / 2
 
   local attackIcon = Concord.entity(self:getWorld())
     :give("position", finalPosX, finalPosY - 50)

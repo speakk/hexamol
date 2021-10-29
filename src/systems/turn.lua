@@ -2,12 +2,11 @@ local TurnSystem = Concord.system({ pool = { "team" }, current_turn = { "team", 
 
 function TurnSystem.init(_, world)
   -- TODO: Team initialization away from turn system init
-  Concord.entity(world):give("team", "player"):give("current_turn"):give("player_controlled")
-  Concord.entity(world):give("team", "ai"):give("ai_controlled")
+  Concord.entity(world):give("team", "player"):give("current_turn"):give("player_controlled"):give("action_points", 10)
+  Concord.entity(world):give("team", "ai"):give("ai_controlled"):give("action_points", 10)
 end
 
-function TurnSystem:end_turn()
-  local current_team = self.current_turn[1]
+function TurnSystem:end_turn(_, current_team)
   current_team:remove("current_turn")
 
   local current_index = table.index_of(self.pool, current_team)

@@ -10,7 +10,13 @@ function TurnActionSystem:take_turn_action(team, action, options)
     return
   end
 
-  self:getWorld():emit(action.event_name, options)
+  if currentTeam.action_points.value - (action.action_points or 0) < 0 then
+    self:getWorld():emit("ran_out_of_action_points", { team = team })
+    return
+  end
+
+  self:getWorld():emit(action.event_name, options, team)
+  self:getWorld():emit("turn_action_taken", { team = team, action = action} )
 end
 
 return TurnActionSystem
