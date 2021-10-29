@@ -12,7 +12,7 @@ function MapClickHandlerSystem:handle_map_click(hex)
       self:getWorld():emit("select_entity", entity_exists_in_hex)
     elseif #(self.selected) > 0 then
       self:getWorld():emit("take_turn_action", team,
-        turn_actions.make_attack,
+        turn_actions.move_and_attack,
         {
           by = self.selected[1],
           against = entity_exists_in_hex,
