@@ -9,5 +9,9 @@ return {
   move_entities = {
     event_name = "move_entities",
     action_points = 1
+  },
+  make_attack = {
+    event_name = "make_attack",
+    action_points = 1
   }
 }

@@ -235,6 +235,21 @@ local Map = Class {
       hex.selected = false
       hex.hilight_path = false
     end
+
+    if (self.last_found_path) then
+      for _, hex in ipairs(self.last_found_path) do
+        hex.hilight_path = true
+      end
+    end
+  end,
+
+  setLastFoundPath = function(self, path)
+    self.last_found_path = path
+    if path then
+      for _, hex in ipairs(states.in_game.map.last_found_path) do
+        hex.hilight_path = true
+      end
+    end
   end
 }
 

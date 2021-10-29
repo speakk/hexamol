@@ -1,39 +1,17 @@
-local push = require 'libs.push.push'
-local GridSystem = Concord.system({ in_map = { "is_in_hex" } })
+--local push = require 'libs.push.push'
+local GridSystem = Concord.system({ })
 
-function GridSystem:init(world)
-  --self.canvas = love.graphics.newCanvas(push:getDimensions())
-  self.canvas = love.graphics.newCanvas(love.graphics:getDimensions())
-  self.mapDrawEntity = Concord.entity(world)
-    :give("sprite", self.canvas)
-    :give("position")
-    :give("origin", 0, 0)
-    :give("layer", "world")
-end
+-- function GridSystem:init(world)
+--   --self.canvas = love.graphics.newCanvas(push:getDimensions())
+--   -- self.canvas = love.graphics.newCanvas(love.graphics:getDimensions())
+--   -- self.mapDrawEntity = Concord.entity(world)
+--   --   :give("sprite", self.canvas)
+--   --   :give("position")
+--   --   :give("origin", 0, 0)
+--   --   :give("layer", "world")
+-- end
 
-function GridSystem.place_entity_in_hex(_, entity, targetHex)
-  states.in_game.map:addEntityToHex(entity, targetHex)
-end
-
-function GridSystem.remove_entity_from_hex(_, _, hex)
-  states.in_game.map:removeEntityFromHex(hex)
-end
-
-function GridSystem:update()
-  states.in_game.map:update()
-  local mouseX, mouseY = love.mouse.getPosition()
-  -- TODO: Change when you implement a camera
-  --local screenX, screenY = mouseX, mouseY
-  local screenX, screenY = push:toGame(mouseX, mouseY)
-
-  local hex = states.in_game.map:getHexFromPixelCoords(screenX, screenY)
-  if hex then
-    hex.selected = true
-    self:getWorld():emit("hex_hovered", hex)
-  end
-end
-
-function GridSystem:draw()
+function GridSystem.draw()
   -- love.graphics.setCanvas(self.canvas)
   -- love.graphics.clear(0,0,0,0)
   love.graphics.setColor(1,1,1,1)
@@ -41,7 +19,7 @@ function GridSystem:draw()
   --love.graphics.setCanvas()
 end
 
-function GridSystem.frame_start(_)
+function GridSystem.frame_start()
   states.in_game.map:frameStart()
 end
 

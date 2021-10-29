@@ -14,10 +14,12 @@ function IsInHexSystem:place_entity_in_hex(entity, targetHex)
   end
 
   entity:give("is_in_hex", targetHex)
+  states.in_game.map:addEntityToHex(entity, targetHex)
 end
 
-function IsInHexSystem.remove_entity_from_hex(_, entity, _)
+function IsInHexSystem.remove_entity_from_hex(_, entity, hex)
   entity:remove("is_in_hex")
+  states.in_game.map:removeEntityFromHex(hex)
 end
 
 return IsInHexSystem

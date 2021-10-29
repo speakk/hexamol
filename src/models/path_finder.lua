@@ -1,5 +1,11 @@
 local AStar = require 'libs.astar.astar'
 
+local cache = {}
+
+-- local getCacheKey = function(from, to, force_target_available)
+-- 
+-- end
+
 local PathFinder = Class {
   init = function(self, gamestate_map)
     local map = {}

@@ -2,11 +2,10 @@ local PathFindingSystem = Concord.system({ selected = { "selected", "is_in_hex" 
 
 function PathFindingSystem:update(dt)
   for _, entity in ipairs(self.wantsPath) do
-    --print("entityAdded?")
     -- TODO: Threaded / coroutines?
     local path = states.in_game.path_finder:find_path(entity.wants_path.from, entity.wants_path.to)
     if path then
-      entity:give("has_path", path)
+      entity:give("has_path", path, entity.wants_path.stop_next_to_target)
       entity:remove("wants_path")
     end
   end
@@ -21,7 +20,12 @@ function PathFindingSystem:update(dt)
 
     hasPath.currentIndex = currentIndex + 1
 
-    if hasPath.currentIndex > #path then
+    local endIndex = #path
+    if self.hasPath.stop_next_to_target then
+      endIndex = endIndex - 1
+    end
+
+    if hasPath.currentIndex > endIndex then
       self:getWorld():emit("path_finished", entity)
     end
   end
