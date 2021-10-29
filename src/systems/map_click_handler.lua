@@ -11,12 +11,12 @@ function MapClickHandlerSystem:handle_map_click(hex)
     if entity_exists_in_hex.is_in_team.teamEntity == team then
       self:getWorld():emit("select_entity", entity_exists_in_hex)
     elseif #(self.selected) > 0 then
-      print("Hmm?")
       self:getWorld():emit("take_turn_action", team,
         turn_actions.make_attack,
         {
           by = self.selected[1],
-          against = entity_exists_in_hex
+          against = entity_exists_in_hex,
+          path = states.in_game.map.last_found_path
         }
       )
     end

@@ -14,6 +14,7 @@ function IsInHexSystem:place_entity_in_hex(entity, targetHex)
   end
 
   entity:give("is_in_hex", targetHex)
+  --print("UM", inspect(targetHex))
   states.in_game.map:addEntityToHex(entity, targetHex)
 end
 

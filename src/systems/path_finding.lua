@@ -5,7 +5,7 @@ function PathFindingSystem:update(dt)
     -- TODO: Threaded / coroutines?
     local path = states.in_game.path_finder:find_path(entity.wants_path.from, entity.wants_path.to)
     if path then
-      entity:give("has_path", path, entity.wants_path.stop_next_to_target)
+      entity:give("has_path", path)
       entity:remove("wants_path")
     end
   end
@@ -16,6 +16,7 @@ function PathFindingSystem:update(dt)
 
     local path = hasPath.path
     local currentNode = path[currentIndex]
+    assert (currentNode, "No currentNode found?")
     self:getWorld():emit("place_entity_in_hex", entity, currentNode)
 
     hasPath.currentIndex = currentIndex + 1
