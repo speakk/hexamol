@@ -4,6 +4,7 @@ Class = require "libs.hump.class"
 inspect = require "libs.inspect"
 vector = require "libs.hump.vector-light"
 tick = require "libs.tick"
+flux = require "libs.flux"
 
 local push = require "libs.push.push"
 
@@ -42,6 +43,7 @@ main_state_machine:set_state("in_game")
 
 function love.update(dt)
   tick.update(dt)
+  flux.update(dt)
   main_state_machine:update(dt)
 end
 

@@ -1,4 +1,4 @@
-globals = {"ECS", "love", "Class", 'inspect', 'functional', 'mediaManager', 'Concord', 'Vector', 'stringx', 'table', 'mathx', 'math', 'state_machine', 'set', 'states', "vector", "tick"}
+globals = {"ECS", "love", "Class", 'inspect', 'functional', 'mediaManager', 'Concord', 'Vector', 'stringx', 'table', 'mathx', 'math', 'state_machine', 'set', 'states', "vector", "tick", "flux"}
 
 max_line_length = 160
 

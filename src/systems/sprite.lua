@@ -12,6 +12,11 @@ local layers = {
     entities = {}
   },
   {
+    name = "icons",
+    camera_tansform = true,
+    entities = {}
+  },
+  {
     name = "ui",
     camera_tansform = false,
     entities = {}
@@ -70,6 +75,8 @@ function SpriteSystem:draw()
 
     for _, entity in ipairs(layer.entities) do
       local position = entity.position
+      love.graphics.setColor(1, 1, 1)
+
       if (entity.health) then
         local red = entity.health.value/entity.health.max
         love.graphics.setColor(red/2+0.5, red, red)
@@ -79,6 +86,7 @@ function SpriteSystem:draw()
         local color = entity.color
         love.graphics.setColor(color.r, color.g, color.b, color.a)
       end
+
 
       local scale = entity.scale and entity.scale.value or 1
       local rotate = entity.rotate and entity.rotate.value or 0
