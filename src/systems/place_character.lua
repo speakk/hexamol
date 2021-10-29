@@ -17,6 +17,7 @@ function PlaceCharacterSystem:place_character(options)
     :give("position")
     :give("sprite", sprite)
     :give("origin", 0.5, 1)
+    :give("health", 100)
     :give("layer", "world")
     :give("is_in_team", options.team)
 

@@ -71,7 +71,7 @@ function SpriteSystem:draw()
     for _, entity in ipairs(layer.entities) do
       local position = entity.position
       if (entity.health) then
-        local red = entity.health.value/entity.health.max_health
+        local red = entity.health.value/entity.health.max
         love.graphics.setColor(red/2+0.5, red, red)
       end
 

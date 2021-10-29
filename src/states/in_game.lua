@@ -11,7 +11,7 @@ function in_game:load_game(_)
   self.world:addSystems(
     ECS.s.input, ECS.s.player_input, ECS.s.hover_handler, ECS.s.click_handler,
     ECS.s.map_click_handler, ECS.s.turn, ECS.s.attack, ECS.s.turn_action,
-    ECS.s.ai, ECS.s.path_hilight,
+    ECS.s.ai, ECS.s.path_hilight, ECS.s.health, ECS.s.kill,
     ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex,
     ECS.s.path_finding, ECS.s.grid, ECS.s.sprite, ECS.s.debug
   )

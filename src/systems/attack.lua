@@ -21,7 +21,11 @@ function AttackSystem:move_and_attack(options)
 end
 
 function AttackSystem:perform_attack(options)
-  print("PEW PEW!!!")
+  --self:getWorld():emit("do_damage", options.against, options.attack.damage)
+  self:getWorld():emit("do_damage", {
+    against = options.against,
+    damage = 50
+  })
 end
 
 return AttackSystem
