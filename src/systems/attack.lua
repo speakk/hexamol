@@ -6,10 +6,20 @@ function AttackSystem:move_and_attack(options)
   assert (options.by)
   assert (options.against)
 
+  print("move_and_attack")
+
+  local path = options.path or states.in_game.path_finder:find_path(options.by.is_in_hex.hex, options.against.is_in_hex.hex, { options.against.is_in_hex.hex },
+  true)
+
+  if not path then
+    print("No path found in move_and_attack!", options.by, options.against)
+  end
+  print("path", #path)
+
   -- TODO: Should we use take_turn_action here? Probably not
   -- In any case: Move entities close to target first
   self:getWorld():emit("move_entities", {
-    path = options.path,
+    path = path,
     entities = { options.by },
     -- TODO: Make this do take_turn_action
     finish_path_action = {

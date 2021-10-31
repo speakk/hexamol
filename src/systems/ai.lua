@@ -2,7 +2,8 @@ local turn_actions = require 'models.turn_actions'
 local AiSystem = Concord.system({
   ai_teams = { "team", "ai_controlled" },
   in_team = { "is_in_team" },
-  current = { "current_turn", "team", "ai_controlled" }
+  current = { "current_turn", "team", "ai_controlled" },
+  all_in_map = { "is_in_hex" }
 })
 
 function AiSystem:getTeamEntities(team)
@@ -66,6 +67,34 @@ local actions = {
         {
           target_hex = randomHex,
           team = team
+        }
+      )
+    end
+  },
+  {
+    -- Random attack
+    run = function(self, team)
+      local aiEntities = self:getTeamEntities(team)
+      if not aiEntities or #aiEntities == 0 then return end
+      local random_entity = table.pick_random(aiEntities)
+
+      print("attack, random_entity", random_entity)
+
+      local enemies = functional.filter(self.all_in_map, function(entity)
+        return entity.is_in_team.teamEntity ~= team
+      end)
+
+      print("attack, enemies", #enemies)
+
+      if not enemies or #enemies == 0 then return end
+
+      print("attacking")
+      local random_enemy = table.pick_random(enemies)
+      self:getWorld():emit("take_turn_action", team,
+        turn_actions.move_and_attack,
+        {
+          by = random_entity,
+          against = random_enemy
         }
       )
     end

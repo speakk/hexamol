@@ -13,9 +13,5 @@ return {
   move_and_attack = {
     event_name = "move_and_attack",
     action_points = 1
-  },
-  perform = {
-    event_name = "move_and_attack",
-    action_points = 1
   }
 }

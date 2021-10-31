@@ -202,21 +202,26 @@ local Map = Class {
   getRandomFreeHex = function(self)
     local shuffledHexes = table.shuffle(table.copy(self.grid))
     for _, hex in ipairs(shuffledHexes) do
-      local isHexOccupied = self:isHexOccupied(hex)
+      local isHexOccupied = self:getHexEntities(hex)
       if not isHexOccupied then return hex end
     end
   end,
 
-  isHexOccupied = function(self, hex)
+  getHexEntities = function(self, hex)
     return self.entities[coordinatesToIndex(hex.q, hex.r)]
   end,
 
-  getHexNeighbors = function(self, hex, include_occupied)
+  getHexNeighbors = function(self, hex, include_occupied, force_available_hexes)
     local neighbors = {}
     for _, direction in ipairs(neighbor_directions) do
       local neighborHex = self:getHex(hex.q + direction.q, hex.r + direction.r)
       if neighborHex then
-        local isHexOccupied = self:isHexOccupied(neighborHex)
+        local isHexOccupied = self:getHexEntities(neighborHex)
+        if force_available_hexes then
+          for _, forceHex in ipairs(force_available_hexes) do
+            if neighborHex == forceHex then isHexOccupied = false end
+          end
+        end
         --if isHexOccupied then print("hex was occupied") end
         if include_occupied or not isHexOccupied then
           table.insert(neighbors, neighborHex)
