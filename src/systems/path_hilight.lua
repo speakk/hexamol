@@ -1,12 +1,7 @@
 local PathHilightSystem = Concord.system( { selected = { "selected", "is_in_hex" }, player_controlled = { "player_controlled", "team" } } )
 
---function PathHilightSystem:init()
---  --self.last_found_path = nil
---end
-
 function PathHilightSystem:hex_hovered(hex)
   self.last_hovered_hex = hex
-  --print("hex_hovered", hex)
 end
 
 function PathHilightSystem:isEntityEnemy(entity)

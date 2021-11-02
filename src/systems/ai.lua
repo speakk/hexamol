@@ -21,47 +21,43 @@ local action_delay = 1
 
 function AiSystem:run_ai_turn(teamEntity)
   self.action_delay_timer = action_delay
-  -- self.loop = coroutine.create(function()
-  --   while (teamEntity.action_points.value > 0) do
-
-  --   end
-  -- end)
-
-  --[[
-
-
-  tick.delay(function()
-    self:getWorld():emit("take_turn_action", teamEntity, turn_actions.end_turn)
-  end, 2)
-  --]]
+  print("run_ai_turn", action_delay)
 end
 
 local actions = {
   {
     -- Random move
-    run = function(self, team)
+    isViable = function(self, team)
       local aiEntities = self:getTeamEntities(team)
-      if aiEntities then
-        local randomEntity = table.pick_random(aiEntities)
-        if randomEntity then
-          local newRandomHex = states.in_game.map:getRandomFreeHex()
-          if (newRandomHex) then
-            self:getWorld():emit("take_turn_action", team,
-              turn_actions.move_entities,
-              {
-                target_hex = newRandomHex,
-                entities = { randomEntity }
-              }
-            )
-          end
-        end
+      if not aiEntities or #aiEntities == 0 then
+        return false
       end
-    end
+
+      return aiEntities
+    end,
+    run = function(self, team, aiEntities)
+      assert(aiEntities)
+      local randomEntity = table.pick_random(aiEntities)
+      local newRandomHex = states.in_game.map:getRandomFreeHex()
+      if (newRandomHex) then
+        self:getWorld():emit("take_turn_action", team,
+        turn_actions.move_entities,
+        {
+          target_hex = newRandomHex,
+          entities = { randomEntity }
+        }
+        )
+      end
+    end,
+    total_action_points = turn_actions.move_entities.action_points
   },
   {
     -- Random place
-    run = function(self, team)
-      local randomHex = states.in_game.map:getRandomFreeHex()
+    isViable = function(self, team)
+      return states.in_game.map:getRandomFreeHex()
+    end,
+    run = function(self, team, randomHex)
+      assert(randomHex)
       self:getWorld():emit("take_turn_action", team,
         turn_actions.place_character,
         {
@@ -69,26 +65,33 @@ local actions = {
           team = team
         }
       )
-    end
+    end,
+    total_action_points = turn_actions.place_character.action_points
   },
   {
-    -- Random attack
-    run = function(self, team)
+    isViable = function(self, team)
       local aiEntities = self:getTeamEntities(team)
-      if not aiEntities or #aiEntities == 0 then return end
+      if not aiEntities or #aiEntities == 0 then return false end
       local random_entity = table.pick_random(aiEntities)
-
-      print("attack, random_entity", random_entity)
 
       local enemies = functional.filter(self.all_in_map, function(entity)
         return entity.is_in_team.teamEntity ~= team
       end)
 
-      print("attack, enemies", #enemies)
+      if not enemies or #enemies == 0 then return false end
 
-      if not enemies or #enemies == 0 then return end
+      return {
+        random_entity = random_entity,
+        enemies = enemies
+      }
+    end,
+    -- Random attack
+    run = function(self, team, data)
+      assert(data.enemies)
+      assert(data.random_entity)
+      local enemies = data.enemies
+      local random_entity = data.random_entity
 
-      print("attacking")
       local random_enemy = table.pick_random(enemies)
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
@@ -97,13 +100,30 @@ local actions = {
           against = random_enemy
         }
       )
-    end
+    end,
+    total_action_points = turn_actions.move_and_attack.action_points
   }
 }
 
 function AiSystem:do_random_action(team)
-  local action = table.pick_random(actions)
-  action.run(self, team)
+  local action_datas = {}
+  local viable_actions = functional.filter(actions, function(action)
+    if action.total_action_points > team.action_points.value then
+      return false
+    end
+
+    local action_data = action.isViable(self, team)
+    if action_data then
+      action_datas[action] = action_data
+      return true
+    end
+  end)
+
+  if #viable_actions == 0 then return false end
+
+  local action = table.pick_random(viable_actions)
+  local result = action.run(self, team, action_datas[action])
+  return true
 end
 
 function AiSystem:update(dt)
@@ -111,12 +131,13 @@ function AiSystem:update(dt)
   if not current then return end
 
   self.action_delay_timer = self.action_delay_timer - dt
+  local viable_left = true
   if self.action_delay_timer <= 0 then
-    self:do_random_action(current)
+    viable_left = self:do_random_action(current)
     self.action_delay_timer = action_delay
   end
 
-  if current.action_points.value <= 0 then
+  if current.action_points.value <= 0 or not viable_left then
     self:getWorld():emit("take_turn_action", current, turn_actions.end_turn)
   end
 end

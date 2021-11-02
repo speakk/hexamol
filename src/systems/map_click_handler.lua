@@ -16,7 +16,6 @@ function MapClickHandlerSystem:handle_map_click(hex)
         {
           by = self.selected[1],
           against = entity_exists_in_hex,
-          path = states.in_game.map.last_found_path
         }
       )
     end

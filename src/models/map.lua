@@ -250,11 +250,11 @@ local Map = Class {
 
   setLastFoundPath = function(self, path)
     self.last_found_path = path
-    if path then
-      for _, hex in ipairs(states.in_game.map.last_found_path) do
-        hex.hilight_path = true
-      end
-    end
+    -- if path then
+    --   for _, hex in ipairs(states.in_game.map.last_found_path) do
+    --     hex.hilight_path = true
+    --   end
+    -- end
   end
 }
 
