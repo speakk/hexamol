@@ -31,7 +31,7 @@ function in_game:resize(w, h)
 end
 
 function in_game:update(dt)
-  self.world:emit("frame_start")
+  self.world:emit("frame_start", dt)
   self.world:emit("update", dt)
   self.world:emit("frame_end")
 end

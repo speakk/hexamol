@@ -206,11 +206,12 @@ local Map = Class {
   update = function(self)
   end,
 
-  frameStart = function(self)
+  frameStart = function(self, dt)
+    local color_change_speed = 3.4
     for _, hex in ipairs(self.grid) do
-      hex.color.r = 1
-      hex.color.g = 1
-      hex.color.b = 1
+      hex.color.r = math.min(hex.color.r + (color_change_speed * dt), 1)
+      hex.color.g = math.min(hex.color.g + (color_change_speed*0.6 * dt), 1)
+      hex.color.b = math.min(hex.color.b + (color_change_speed * dt), 1)
     end
 
     if (self.last_found_path) then
