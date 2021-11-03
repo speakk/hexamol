@@ -4,14 +4,9 @@ local hexagonSprite = love.graphics.newImage("media/hexagon.png")
 local spriteSize = 32
 local tileSize = spriteSize / 2 * 1.1
 
-local Hex = Class {
-  init = function(self, q, r)
-    -- q: column, r: row
-    self.q = q
-    self.r = r
-    self.s = -q-r
-  end
-}
+local function Hex(q, r)
+  return Concord.entity():give("coordinates", q, r)
+end
 
 local function createGrid(radius)
   local map = {}
@@ -38,8 +33,8 @@ local verticalOffset = 4
 
 -- luacheck: ignore
 local function flat_hex_to_pixel(hex, hexSize)
-  local x = hexSize * (3/2 * hex.q)
-  local y = hexSize * (sqrt3/2 * hex.q + sqrt3 * hex.r) * (hexSize / (hexSize + verticalOffset))
+  local x = hexSize * (3/2 * hex.coordinates.q)
+  local y = hexSize * (sqrt3/2 * hex.coordinates.q + sqrt3 * hex.coordinates.r) * (hexSize / (hexSize + verticalOffset))
 
   return x,y
 end
@@ -95,8 +90,8 @@ local function pointy_hex_to_pixel(hex, hexSize, originX, originY)
   local hexSizeX = hexSize
   local hexSizeY = hexSize
 
-  local x = (matrix.f0 * hex.q + matrix.f1 * hex.r) * layout_size_x
-  local y = (matrix.f2 * hex.q + matrix.f3 * hex.r) * layout_size_y
+  local x = (matrix.f0 * hex.coordinates.q + matrix.f1 * hex.coordinates.r) * layout_size_x
+  local y = (matrix.f2 * hex.coordinates.q + matrix.f3 * hex.coordinates.r) * layout_size_y
 
   return x + originX, y + originY
 end
@@ -133,7 +128,7 @@ local Map = Class {
     self.gridHash = {}
 
     for _, hex in ipairs(self.grid) do
-      self.gridHash[coordinatesToIndex(hex.q, hex.r)] = hex
+      self.gridHash[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = hex
     end
 
     table.sort(self.grid, function(a, b)
@@ -177,11 +172,11 @@ local Map = Class {
   end,
 
   addEntityToHex = function(self, entity, hex)
-    self.entities[coordinatesToIndex(hex.q, hex.r)] = entity
+    self.entities[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = entity
   end,
 
   removeEntityFromHex = function(self, hex)
-    self.entities[coordinatesToIndex(hex.q, hex.r)] = nil
+    self.entities[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = nil
   end,
 
   getRandomFreeHex = function(self)
@@ -193,13 +188,13 @@ local Map = Class {
   end,
 
   getHexOccupants = function(self, hex)
-    return self.entities[coordinatesToIndex(hex.q, hex.r)]
+    return self.entities[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)]
   end,
 
   getHexNeighbors = function(self, hex, include_occupied, force_available_hexes)
     local neighbors = {}
     for _, direction in ipairs(neighbor_directions) do
-      local neighborHex = self:getHex(hex.q + direction.q, hex.r + direction.r)
+      local neighborHex = self:getHex(hex.coordinates.q + direction.coordinates.q, hex.coordinates.r + direction.coordinates.r)
       if neighborHex then
         local isHexOccupied = self:getHexOccupants(neighborHex)
         if force_available_hexes then
