@@ -94,13 +94,7 @@ local layout_size_y = tileSize - 5
 local function pointy_hex_to_pixel(hex, hexSize, originX, originY)
   local hexSizeX = hexSize
   local hexSizeY = hexSize
-  --local hexSizeY = hexSize - verticalOffset
 
-  -- local x = hexSizeX * (sqrt3 * hex.q + sqrt3/2 * hex.r)
-  -- local y = hexSizeY * (3/2 * hex.r)
-
-  -- double x = (M.f0 * h.q + M.f1 * h.r) * layout.size.x;
-  -- double y = (M.f2 * h.q + M.f3 * h.r) * layout.size.y;
   local x = (matrix.f0 * hex.q + matrix.f1 * hex.r) * layout_size_x
   local y = (matrix.f2 * hex.q + matrix.f3 * hex.r) * layout_size_y
 
@@ -109,15 +103,6 @@ end
 
 
 local function pixel_to_pointy_hex(x, y, hexSize, originX, originY)
-  -- local hexSizeX = hexSize
-  -- --local hexSizeY = hexSize - verticalOffset
-  -- local hexSizeY = hexSize
-
-  -- local q = (sqrt3/3 * x - 1/3 * y) / hexSizeX
-  -- local r = (2/3 * y) / hexSizeY
-
-  -- return hex_round(q, r)
-
   local finalX = (x - originX) / layout_size_x
   local finalY = (y - originY) / layout_size_y
   local q = matrix.b0 * finalX + matrix.b1 * finalY
@@ -202,12 +187,12 @@ local Map = Class {
   getRandomFreeHex = function(self)
     local shuffledHexes = table.shuffle(table.copy(self.grid))
     for _, hex in ipairs(shuffledHexes) do
-      local isHexOccupied = self:getHexEntities(hex)
+      local isHexOccupied = self:getHexOccupants(hex)
       if not isHexOccupied then return hex end
     end
   end,
 
-  getHexEntities = function(self, hex)
+  getHexOccupants = function(self, hex)
     return self.entities[coordinatesToIndex(hex.q, hex.r)]
   end,
 
@@ -216,7 +201,7 @@ local Map = Class {
     for _, direction in ipairs(neighbor_directions) do
       local neighborHex = self:getHex(hex.q + direction.q, hex.r + direction.r)
       if neighborHex then
-        local isHexOccupied = self:getHexEntities(neighborHex)
+        local isHexOccupied = self:getHexOccupants(neighborHex)
         if force_available_hexes then
           for _, forceHex in ipairs(force_available_hexes) do
             if neighborHex == forceHex then isHexOccupied = false end
@@ -250,11 +235,6 @@ local Map = Class {
 
   setLastFoundPath = function(self, path)
     self.last_found_path = path
-    -- if path then
-    --   for _, hex in ipairs(states.in_game.map.last_found_path) do
-    --     hex.hilight_path = true
-    --   end
-    -- end
   end
 }
 

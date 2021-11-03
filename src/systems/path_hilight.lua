@@ -16,7 +16,7 @@ end
 
 function PathHilightSystem:update(dt)
   if states.in_game.map.last_hovered_hex then
-    local hexEntity = states.in_game.map:getHexEntities(states.in_game.map.last_hovered_hex)
+    local hexEntity = states.in_game.map:getHexOccupants(states.in_game.map.last_hovered_hex)
     local containsEnemies = self:isEntityEnemy(hexEntity)
 
     for _, entity in ipairs(self.selected) do
