@@ -146,24 +146,6 @@ local Map = Class {
 
   end,
 
-  draw = function(self)
-    --[[
-    for _, tile in ipairs(self.grid) do
-      local x,y = pointy_hex_to_pixel(tile, self.hexSize, self.x, self.y)
-      if tile.selected then
-        love.graphics.setColor(1,0.2,0.8)
-        y = y - 4
-      end
-
-      if tile.hilight_path then
-        love.graphics.setColor(0.6,1.0,0.4)
-      end
-      love.graphics.draw(hexagonSprite, math.floor(x), math.floor(y), 0, 1, 1, spriteSize/2, spriteSize/2)
-      love.graphics.setColor(1,1,1)
-    end
-    ]]--
-  end,
-
   getHexFromPixelCoords = function(self, x, y)
     if not x or not y then return nil end
     local q, r = pixel_to_pointy_hex(x, y, self.hexSize, self.x, self.y)
