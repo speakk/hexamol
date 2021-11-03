@@ -116,7 +116,11 @@ function SpriteSystem:draw()
             end
           end
 
-          love.graphics.draw(entity.sprite.value, math.floor(position.x), math.floor(position.y), rotate, scale, scale, w*originX, h*originY)
+          local deltaX = entity.position_delta and entity.position_delta.x or 0
+          local deltaY = entity.position_delta and entity.position_delta.y or 0
+          local finalX = math.floor(position.x + deltaX)
+          local finalY = math.floor(position.y + deltaY)
+          love.graphics.draw(entity.sprite.value, finalX, finalY, rotate, scale, scale, w*originX, h*originY)
         end
 
         if (entity.selected) then

@@ -20,6 +20,7 @@ local function createGrid(self, radius, world)
         :give("position", x, y)
         :give("layer", "map")
         :give("color")
+        :give("position_delta")
       world:addEntity(hex)
       table.insert(map, hex)
     end
@@ -208,10 +209,13 @@ local Map = Class {
 
   frameStart = function(self, dt)
     local color_change_speed = 3.4
+    local position_change_speed = 0.4
     for _, hex in ipairs(self.grid) do
       hex.color.r = math.min(hex.color.r + (color_change_speed * dt), 1)
       hex.color.g = math.min(hex.color.g + (color_change_speed*0.6 * dt), 1)
       hex.color.b = math.min(hex.color.b + (color_change_speed * dt), 1)
+
+      hex.position_delta.y = math.max(hex.position_delta.y - (position_change_speed * dt), 0)
     end
 
     if (self.last_found_path) then
@@ -222,6 +226,7 @@ local Map = Class {
 
     if self.last_hovered_hex then
       self.last_hovered_hex.color.g = 0.5
+      self.last_hovered_hex.position_delta.y = -5
     end
   end,
 
