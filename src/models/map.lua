@@ -8,13 +8,19 @@ local function Hex(q, r)
   return Concord.entity():give("coordinates", q, r)
 end
 
-local function createGrid(radius)
+local function createGrid(self, radius, world)
   local map = {}
   for q = -radius,radius do
     local r1 = math.max(-radius, -q - radius)
     local r2 = math.min(radius, -q + radius)
     for r = r1,r2 do
-      table.insert(map, Hex(q, r))
+      local x, y = self:getPixelCoordsFromHex(Hex(q, r))
+      local hex = Hex(q, r)
+        :give("sprite", hexagonSprite)
+        :give("position", x, y)
+        :give("layer", "map")
+      world:addEntity(hex)
+      table.insert(map, hex)
     end
   end
 
@@ -118,11 +124,11 @@ local function indexToCoordinates(index)
 end
 
 local Map = Class {
-  init = function(self, x, y, radius)
-    self.grid = createGrid(radius)
+  init = function(self, x, y, radius, world)
     self.x = x
     self.y = y
     self.hexSize = tileSize
+    self.grid = createGrid(self, radius, world)
     self.entities = {}
 
     self.gridHash = {}
@@ -141,6 +147,7 @@ local Map = Class {
   end,
 
   draw = function(self)
+    --[[
     for _, tile in ipairs(self.grid) do
       local x,y = pointy_hex_to_pixel(tile, self.hexSize, self.x, self.y)
       if tile.selected then
@@ -154,6 +161,7 @@ local Map = Class {
       love.graphics.draw(hexagonSprite, math.floor(x), math.floor(y), 0, 1, 1, spriteSize/2, spriteSize/2)
       love.graphics.setColor(1,1,1)
     end
+    ]]--
   end,
 
   getHexFromPixelCoords = function(self, x, y)

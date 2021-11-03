@@ -16,7 +16,7 @@ function in_game:load_game(_)
     ECS.s.path_finding, ECS.s.grid, ECS.s.ui, ECS.s.sprite, ECS.s.debug
   )
 
-  self.map = Map(320, 240, 6)
+  self.map = Map(320, 240, 6, self.world)
   self.path_finder = PathFinder(self.map)
 
   self.world:emit("initialize_map_entities")

@@ -6,6 +6,12 @@ local SpriteSystem = Concord.system({ pool = {"position", "layer"}, camera = {"c
 
 local layers = {
   {
+    name = "map",
+    camera_transform = true,
+    z_sorted = true,
+    entities = {}
+  },
+  {
     name = "world",
     camera_tansform = true,
     z_sorted = true,
