@@ -12,7 +12,7 @@ function HoverHandlerSystem:update()
   local hex = states.in_game.map:getHexFromPixelCoords(screenX, screenY)
   if hex then
     states.in_game.map.last_hovered_hex = hex
-    hex.selected = true
+    --hex.selected = true
     self:getWorld():emit("hex_hovered", hex)
   end
 end

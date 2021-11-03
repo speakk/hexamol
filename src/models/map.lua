@@ -19,6 +19,7 @@ local function createGrid(self, radius, world)
         :give("sprite", hexagonSprite)
         :give("position", x, y)
         :give("layer", "map")
+        :give("color")
       world:addEntity(hex)
       table.insert(map, hex)
     end
@@ -207,14 +208,19 @@ local Map = Class {
 
   frameStart = function(self)
     for _, hex in ipairs(self.grid) do
-      hex.selected = false
-      hex.hilight_path = false
+      hex.color.r = 1
+      hex.color.g = 1
+      hex.color.b = 1
     end
 
     if (self.last_found_path) then
       for _, hex in ipairs(self.last_found_path) do
-        hex.hilight_path = true
+        hex.color.r = 0.5
       end
+    end
+
+    if self.last_hovered_hex then
+      self.last_hovered_hex.color.g = 0.5
     end
   end,
 
