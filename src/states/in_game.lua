@@ -13,7 +13,8 @@ function in_game:load_game(_)
     ECS.s.map_click_handler, ECS.s.turn, ECS.s.attack, ECS.s.turn_action,
     ECS.s.ai, ECS.s.path_hilight, ECS.s.health, ECS.s.kill, ECS.s.action_points,
     ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex,
-    ECS.s.path_finding, ECS.s.grid, ECS.s.ui, ECS.s.sprite, ECS.s.debug
+    ECS.s.path_finding, ECS.s.grid, ECS.s.ui, ECS.s.sprite, ECS.s.debug,
+    ECS.s.spawn_teams
   )
 
   self.map = Map(320, 240, 6, self.world)

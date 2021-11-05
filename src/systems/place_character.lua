@@ -19,9 +19,12 @@ function PlaceCharacterSystem:place_character(options)
     :give("origin", 0.5, 1)
     :give("health", 100)
     :give("layer", "world")
+    :give("can_be_selected")
+    :give("can_be_moved")
     :give("is_in_team", options.team)
 
   self:getWorld():emit("place_entity_in_hex", entity, options.target_hex)
+  print("placed in...", options.target_hex.coordinates.q, options.target_hex.coordinates.r)
 end
 
 return PlaceCharacterSystem

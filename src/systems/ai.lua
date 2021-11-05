@@ -1,7 +1,7 @@
 local turn_actions = require 'models.turn_actions'
 local AiSystem = Concord.system({
   ai_teams = { "team", "ai_controlled" },
-  in_team = { "is_in_team" },
+  in_team = { "is_in_team", "can_be_moved" },
   current = { "current_turn", "team", "ai_controlled" },
   all_in_map = { "is_in_hex" }
 })
