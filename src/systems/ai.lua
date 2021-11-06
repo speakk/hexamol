@@ -2,6 +2,7 @@ local turn_actions = require 'models.turn_actions'
 local AiSystem = Concord.system({
   ai_teams = { "team", "ai_controlled" },
   in_team = { "is_in_team", "can_be_moved" },
+  bases = { "base" },
   current = { "current_turn", "team", "ai_controlled" },
   spawn_hexes = { "spawn_hex" },
   all_in_map = { "is_in_hex" }
@@ -58,7 +59,8 @@ local actions = {
         )
       end
     end,
-    total_action_points = turn_actions.move_entities.action_points
+    total_action_points = turn_actions.move_entities.action_points,
+    weight = 1
   },
   {
     -- Random place
@@ -76,9 +78,11 @@ local actions = {
         }
       )
     end,
-    total_action_points = turn_actions.place_character.action_points
+    total_action_points = turn_actions.place_character.action_points,
+    weight = 1
   },
   {
+    -- Random attack
     isViable = function(self, team)
       local aiEntities = self:getTeamEntities(team)
       if not aiEntities or #aiEntities == 0 then return false end
@@ -95,7 +99,6 @@ local actions = {
         enemies = enemies
       }
     end,
-    -- Random attack
     run = function(self, team, data)
       assert(data.enemies)
       assert(data.random_entity)
@@ -111,9 +114,61 @@ local actions = {
         }
       )
     end,
-    total_action_points = turn_actions.move_and_attack.action_points
+    total_action_points = turn_actions.move_and_attack.action_points,
+    weight = 1
+  },
+  {
+    -- Attack base
+    isViable = function(self, team)
+      local enemy_base = functional.find_match(self.bases, function(base)
+        return base.is_in_team.teamEntity ~= team
+      end)
+
+      local aiEntities = self:getTeamEntities(team)
+      if not aiEntities or #aiEntities == 0 then return false end
+      local random_entity = table.pick_random(aiEntities)
+
+      if not enemy_base then return false end
+      if not random_entity then return false end
+
+      return {
+        enemy_base = enemy_base,
+        random_entity = random_entity
+      }
+    end,
+    run = function(self, team, data)
+      assert(data.enemy_base)
+      assert(data.random_entity)
+
+      self:getWorld():emit("take_turn_action", team,
+        turn_actions.move_and_attack,
+        {
+          by = data.random_entity,
+          against = data.enemy_base
+        }
+      )
+    end,
+    total_action_points = turn_actions.move_and_attack.action_points,
+    weight = 3
   }
 }
+
+local function weighted_random(weights)
+    local sum = 0
+    for _, weight in ipairs (weights) do
+        sum = sum + weight
+    end
+    if sum == 0 then return end
+    local value = math.random (sum)
+    sum = 0
+    for i, weight in ipairs (weights) do
+        sum = sum + weight
+        if value <= sum then
+            return i, weight
+        end
+    end
+end
+
 
 function AiSystem:do_random_action(team)
   local action_datas = {}
@@ -131,8 +186,11 @@ function AiSystem:do_random_action(team)
 
   if #viable_actions == 0 then return false end
 
-  local action = table.pick_random(viable_actions)
-  local result = action.run(self, team, action_datas[action])
+  local weights = functional.map(viable_actions, function(action) return action.weight end)
+  local weightedIndex, _ = weighted_random(weights)
+
+  local action = viable_actions[weightedIndex]
+  local _ = action.run(self, team, action_datas[action])
   return true
 end
 
