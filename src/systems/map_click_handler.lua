@@ -27,7 +27,7 @@ function MapClickHandlerSystem:handle_map_click(hex)
         entities = self.selected
       }
     )
-  else
+  elseif hex.spawn_hex and hex.spawn_hex.team == team then
     self:getWorld():emit("take_turn_action", team,
       turn_actions.place_character,
       {

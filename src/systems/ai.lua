@@ -3,8 +3,17 @@ local AiSystem = Concord.system({
   ai_teams = { "team", "ai_controlled" },
   in_team = { "is_in_team", "can_be_moved" },
   current = { "current_turn", "team", "ai_controlled" },
+  spawn_hexes = { "spawn_hex" },
   all_in_map = { "is_in_hex" }
 })
+
+function AiSystem:getFreeSpawnHex(team)
+  local teamHexes = functional.filter(self.spawn_hexes, function(hex)
+    return hex.spawn_hex.team == team
+  end)
+
+  return table.pick_random(teamHexes)
+end
 
 function AiSystem:getTeamEntities(team)
   return functional.filter(self.in_team, function(entity)
@@ -54,7 +63,8 @@ local actions = {
   {
     -- Random place
     isViable = function(self, team)
-      return states.in_game.map:getRandomFreeHex()
+      return self:getFreeSpawnHex(team)
+      --return states.in_game.map:getRandomFreeHex()
     end,
     run = function(self, team, randomHex)
       assert(randomHex)

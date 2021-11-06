@@ -29,6 +29,20 @@ local function createGrid(self, radius, world)
   return map
 end
 
+local function reflectR(hex)
+  --local q = hex.coordinates.q
+  local r = hex.coordinates.r
+  local s = -hex.coordinates.q-hex.coordinates.r
+  return Hex(s, r)
+end
+
+local function reflectUp(hex)
+  local q = hex.coordinates.q
+  local r = hex.coordinates.r
+  --local s = -hex.coordinates.q-hex.coordinates.r
+  return Hex(-q, -r)
+end
+
 local neighbor_directions = {
   Hex(1, 0), Hex(1, -1), Hex(0, -1),
   Hex(-1, 0), Hex(-1, 1), Hex(0, 1),
@@ -183,6 +197,9 @@ local Map = Class {
     return self.entities[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)]
   end,
 
+  reflectHexR = reflectR,
+  reflectHexUp = reflectUp,
+
   getHexNeighbors = function(self, hex, include_occupied, force_available_hexes)
     local neighbors = {}
     for _, direction in ipairs(neighbor_directions) do
@@ -208,12 +225,19 @@ local Map = Class {
   end,
 
   frameStart = function(self, dt)
+    -- TODO Move the hex coloring somewhere else? Getting pretty crowded in here...
     local color_change_speed = 3.4
     local position_change_speed = 0.4
     for _, hex in ipairs(self.grid) do
-      hex.color.r = math.min(hex.color.r + (color_change_speed * dt), 1)
-      hex.color.g = math.min(hex.color.g + (color_change_speed*0.6 * dt), 1)
-      hex.color.b = math.min(hex.color.b + (color_change_speed * dt), 1)
+      local destR, destG, destB = 1,1,1
+      local spawnHex = hex.spawn_hex
+      if spawnHex then
+        local color = spawnHex.team.color
+        destR, destG, destB = color.r, color.g, color.b
+      end
+      hex.color.r = math.min(hex.color.r + (color_change_speed * dt), destR)
+      hex.color.g = math.min(hex.color.g + (color_change_speed*0.6 * dt), destG)
+      hex.color.b = math.min(hex.color.b + (color_change_speed * dt), destB)
 
       hex.position_delta.y = math.max(hex.position_delta.y - (position_change_speed * dt), 0)
     end
