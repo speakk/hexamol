@@ -18,6 +18,10 @@ function IsInHexSystem:place_entity_in_hex(entity, targetHex)
   states.in_game.map:addEntityToHex(entity, targetHex)
 end
 
+function IsInHexSystem:kill_character(options)
+  self:getWorld():emit("remove_entity_from_hex", options.character, options.character.is_in_hex.hex)
+end
+
 function IsInHexSystem.remove_entity_from_hex(_, entity, hex)
   entity:remove("is_in_hex")
   states.in_game.map:removeEntityFromHex(hex)
