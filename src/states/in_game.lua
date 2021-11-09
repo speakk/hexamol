@@ -1,12 +1,16 @@
 local Map = require 'models.map'
 local PathFinder = require 'models.path_finder'
 
+local Gamestate = require 'libs.hump.gamestate'
+local game_over = require 'states.game_over'
+
 local in_game = {}
 
 function in_game:load_game(_)
   self.world_width = 640
   self.world_height = 480
   self.world = Concord.world()
+  self.paused = false
 
   self.world:addSystems(
     ECS.s.input, ECS.s.player_input, ECS.s.hover_handler, ECS.s.click_handler,
@@ -14,6 +18,7 @@ function in_game:load_game(_)
     ECS.s.ai, ECS.s.path_hilight, ECS.s.health, ECS.s.kill, ECS.s.action_points,
     ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex,
     ECS.s.path_finding, ECS.s.grid, ECS.s.ui, ECS.s.sprite, ECS.s.debug,
+    ECS.s.base, ECS.s.game_over,
     ECS.s.spawn_teams
   )
 
@@ -42,9 +47,16 @@ function in_game:draw()
   self.world:emit("draw")
 end
 
+function in_game:game_over(player_won)
+  Gamestate.push(game_over)
+end
+
 function in_game:key_pressed(key, scancode, isrepeat)
   --print("in game key", key)
   self.world:emit("key_pressed", key, scancode, isrepeat)
+
+  -- TODO: Game over test
+  if key == 'g' then self.world:emit("game_over", false) end
 end
 
 function in_game:mouse_moved(x, y)
