@@ -6,7 +6,7 @@ vector = require "libs.hump.vector-light"
 tick = require "libs.tick"
 flux = require "libs.flux"
 
-local Gamestate = require "libs.hump.gamestate"
+Gamestate = require "libs.hump.gamestate"
 
 push = require "libs.push.push"
 
@@ -15,8 +15,8 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 local windowWidth, windowHeight = love.window.getDesktopDimensions()
 windowWidth, windowHeight = windowWidth*.7, windowHeight*.7 --make the window a bit smaller than the screen itself
 
-push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = false })
-push:setupCanvas({ { name = "action_points" } })
+push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = false, canvas = false })
+--push:setupCanvas({ { name = "action_points" } })
 
 -- Enable require without specifying 'src' in the beginning
 love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";src/?.lua")
@@ -37,6 +37,7 @@ Concord.utils.loadNamespace("src/systems", ECS.s)
 -- CONCORD CONFIG END --
 
 states = {
+  main_menu = require("states.main_menu"),
   in_game = require("states.in_game"),
   game_over = require("states.game_over")
 }
@@ -45,7 +46,7 @@ states = {
 
 --main_state_machine:set_state("in_game")
 
-Gamestate.switch(states.in_game)
+Gamestate.switch(states.main_menu)
 
 function love.update(dt)
   tick.update(dt)
@@ -84,4 +85,8 @@ function love.draw()
   --main_state_machine:draw()
   Gamestate.current():draw()
   push:finish()
+
+  if (Gamestate.current().debugDraw) then
+    Gamestate.current():debugDraw()
+  end
 end

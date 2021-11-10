@@ -1,42 +1,33 @@
-local UISystem = Concord.system({ action_points_pool = { "action_points", "current_turn" }})
+local UiSystem = Concord.system({ pool = { "ui" }})
 
-local action_point_icon = love.graphics.newImage('media/action_point.png')
-
--- TODO: Ditch this and use actual max action points
-local assumed_action_points = 10
-
-local action_point_margin = 10
-
-function UISystem:init(world)
-  --local actionPointElementWidth = 500
-  self.action_point_canvas = love.graphics.newCanvas(
-    (action_point_icon:getWidth() + action_point_margin) * assumed_action_points, action_point_icon:getHeight()
-  )
-
-  local w, h = push:getDimensions()
-  local actionPointX = w/2
-  local actionPointY = h - 60
-  --local actionPointX = w/2 - actionPointElementWidth/2
-  --local actionPointY = h - 60
-  self.action_point_entity = Concord.entity(world)
-    :give("sprite", self.action_point_canvas)
-    :give("position", actionPointX, actionPointY)
-    :give("origin", 0.5, 0.5)
-    :give("layer", "ui")
-end
-
-function UISystem:draw()
-  local current_turn = self.action_points_pool[1]
-  if not current_turn then return end
-
-  local current_canvas = love.graphics.getCanvas()
-  love.graphics.setCanvas(self.action_point_canvas)
-  love.graphics.clear()
-  local w = action_point_icon:getWidth() + action_point_margin
-  for i=1,current_turn.action_points.value do
-    love.graphics.draw(action_point_icon, (i-1) * w, 0)
+function UiSystem:update(dt)
+  for _, entity in ipairs(self.pool) do
+    if entity.ui.active then
+      entity.ui.element:update(dt)
+    end
   end
-  love.graphics.setCanvas(current_canvas)
 end
 
-return UISystem
+function UiSystem:draw()
+  for _, entity in ipairs(self.pool) do
+    if entity.ui.active then
+      entity.ui.element:draw()
+    end
+  end
+end
+
+function UiSystem:mouse_moved(x, y)
+  local realX, realY = push:toGame(x, y)
+  for _, entity in ipairs(self.pool) do
+    entity.ui.element:mouse_moved(realX, realY)
+  end
+end
+
+function UiSystem:mouse_pressed(x, y, button)
+  local realX, realY = push:toGame(x, y)
+  for _, entity in ipairs(self.pool) do
+    entity.ui.element:mouse_pressed(realX, realY, button)
+  end
+end
+
+return UiSystem
