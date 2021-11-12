@@ -38,6 +38,9 @@ function context.new(elem)
 end
 
 function context:bubbleUpdate()
+	if self.element.settings.pendingUpdate then
+		return;
+	end
     self.element.settings.pendingUpdate  = true
     self.element.settings.needsRendering = true
 
@@ -53,21 +56,19 @@ function context:set()
             activeContext.childrenContexts[#activeContext.childrenContexts+1] = self
         end
 
-        local x, y = push:toReal(self.parentCtx.absX + self.view.x, self.parentCtx.absY + self.view.y)
-        self.absX      = x
-        self.absY      = y
+        self.absX      = self.parentCtx.absX + self.view.x
+        self.absY      = self.parentCtx.absY + self.view.y
 		
 		self.offsetX   = self.view.x +self.parentCtx.offsetX
 		self.offsetY   = self.view.y +self.parentCtx.offsetY
 
         activeContext  = self
     else
-      local x, y = push:toReal(self.view.x, self.view.y)
-        self.absX      = x
-		self.absY      = y
+        self.absX      = self.view.x
+		self.absY      = self.view.y
 		
-		self.offsetX   = 0
-		self.offsetY   = 0
+		self.offsetX   = self.view.lgTranslateX + self.view.x
+		self.offsetY   = self.view.lgTranslateY + self.view.y
 
         activeContext  = self
     end
@@ -173,9 +174,7 @@ function context:normalizePos(x, y)
 		yPX = self.element.view.h * y
 	end
 
-        if not self.absX then self.absX = 0 end
-        if not self.absY then self.absY = 0 end
-	return (xPX or x) + self.absX, (yPX or y) + self.absY
+	return (xPX or x) + self.offsetX, (yPX or y) + self.offsetY
 end
 
 function context:normY(y)
@@ -225,13 +224,11 @@ end
 --To be used by the element
 function context:sizeChanged()
 	if self.parentCtx then
-                local x, y = push:toReal(self.parentCtx.absX + self.view.x, self.parentCtx.absY + self.view.y)
-                self.absX      = x
-                self.absY      = y
+		self.absX      = self.parentCtx.absX + self.view.x
+		self.absY      = self.parentCtx.absY + self.view.y
 	else
-          local x, y = push:toReal(self.view.x, self.view.y)
-          self.absX      = x
-          self.absY      = y
+		self.absX      = self.view.x
+		self.absY      = self.view.y
 	end
 
 	self.events:push('resize')
@@ -243,13 +240,11 @@ end
 
 function context:posChanged()
 	if self.parentCtx then
-                local x, y = push:toReal(self.parentCtx.absX + self.view.x, self.parentCtx.absY + self.view.y)
-                self.absX      = x
-                self.absY      = y
+		self.absX      = self.parentCtx.absX + self.view.x
+		self.absY      = self.parentCtx.absY + self.view.y
 	else
-          local x, y = push:toReal(self.view.x, self.view.y)
-          self.absX      = x
-          self.absY      = y
+		self.absX      = self.view.x
+		self.absY      = self.view.y
 	end
 
 	self:doOnEveryChild(posPropogator)

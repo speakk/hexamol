@@ -11,21 +11,27 @@ local scene = require(path.. ".core.scene")
 local currentCanvasID
 
 ---@class Element
-local element = {}
+local element = {
+	typeName = 'HeliumElement'
+}
 element.__index = element
 
 local type,pcall = type,pcall
 setmetatable(element, {
-		__call = function(cls, func, param, w, h, flags)
+		__call = function(cls, func, param, w, h, id, flags)
 			local self
 			
 			--Make the object inherit class
 			self = setmetatable({}, element)
 			self.parentFunc = func
 
-			self:new(param,nil, w, h, flags)
+			self:new(param,nil, w, h, id, flags)
 			self:createProxies()
-
+			local cx = context.getContext()
+			if cx then
+				self:setup()
+				self.settings.isSetup = true
+			end
 			---@type Element
 			return self
 		end
@@ -33,10 +39,11 @@ setmetatable(element, {
 
 --Control functions
 --The new function that should be used for element creation
-function element:new(param, immediate, w, h, flags)
+function element:new(param, immediate, w, h, id, flags)
 	self.parameters = {}
 	self.baseParams = param
 	self.flags = flags or {}
+	self.id = id
 
 	--Internal state callbacks
 	self.callbacks = {}
@@ -76,6 +83,8 @@ function element:new(param, immediate, w, h, flags)
 		h = h or 10,
 		minW = w or 0,
 		minH = h or 0,
+		lgTranslateX = 0,
+		lgTranslateY = 0,
 	}
 
 	self.size = setmetatable({}, {__index = function(t, index)
@@ -116,9 +125,11 @@ function element:sizeChange(i, v)
 	end
 
 	if self.callbacks.onSizeChange then
+		self.context:set()
 		for i, cb in ipairs(self.callbacks.onSizeChange) do
 			cb(self.view.w, self.view.h)
 		end
+		self.context:unset()
 	end
 end
 
@@ -131,33 +142,41 @@ function element:posChange(i, v)
 	end
 	
 	if self.callbacks.onPosChange then
+		self.context:set()
 		for i, cb in ipairs(self.callbacks.onPosChange) do
 			cb(self.view.x, self.view.y)
 		end
+		self.context:unset()
 	end
 end
 
 function element:onUpdate()
 	if self.callbacks.onUpdate then
+		self.context:set()
 		for i, cb in ipairs(self.callbacks.onUpdate) do
 			cb()
 		end
+		self.context:unset()
 	end
 end
 
 function element:onLoad()
 	if self.callbacks.onLoad then
+		self.context:set()
 		for i, cb in ipairs(self.callbacks.onLoad) do
 			cb()
 		end
+		self.context:unset()
 	end
 end
 
 function element:onDestroy()
 	if self.callbacks.onDestroy then
+		self.context:set()
 		for i, cb in ipairs(self.callbacks.onDestroy) do
 			cb()
 		end
+		self.context:unset()
 	end
 end
 
@@ -218,6 +237,11 @@ end
 function element:setParam(p)
 	self.baseParams = p
 	self.context:bubbleUpdate()
+end
+
+--Returns the proxied parameter table
+function element:getParam()
+	return self.parameters
 end
 
 function element:setSize(w, h)
@@ -314,6 +338,7 @@ function element:externalRender()
 	end
 
 	if self.settings.needsRendering then
+		self.view.lgTranslateX, self.view.lgTranslateY = lg.transformPoint(0,0)
 		if self.settings.hasCanvas then
 			setCanvas(self.canvas)
 			--need scissors
@@ -437,6 +462,10 @@ end
 
 function element:getSize()
 	return self.view.w, self.view.h
+end
+
+function element:getView()
+	return self.view.x, self.view.y, self.view.w, self.view.h
 end
 
 ---Destroys this element

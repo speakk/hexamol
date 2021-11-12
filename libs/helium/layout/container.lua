@@ -70,7 +70,7 @@ function container:draw(containerX, containerY, containerWidth, containerHeight,
 	end
 
 	children[1]:draw(x, y, w, h)
-        return containerWidth, containerHeight
+	return containerWidth, containerHeight
 end
 
 return container
