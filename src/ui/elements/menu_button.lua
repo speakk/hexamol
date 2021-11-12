@@ -30,7 +30,8 @@ return helium(function(param, view)
                   love.graphics.draw(param.ico,0+(50*animProg.state),(view.h/2)-(param.ico:getHeight()/2))
                 end
 		love.graphics.setColor(colorAnim[1],colorAnim[2],colorAnim[3],1)
-		love.graphics.print(param.text,(20*animProg.state),12)
-                print("Being drawn?")
+		--love.graphics.print(param.text,(20*animProg.state),12)
+		love.graphics.print(param.text,0,0)
+                --print("Button being drawn", view.x, view.y, view.w, view.h)
 	end
 end)

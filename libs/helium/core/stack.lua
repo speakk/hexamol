@@ -173,7 +173,6 @@ function context:normalizePos(x, y)
 		yPX = self.element.view.h * y
 	end
 
-        print("mo", self.absX, self.absY)
         if not self.absX then self.absX = 0 end
         if not self.absY then self.absY = 0 end
 	return (xPX or x) + self.absX, (yPX or y) + self.absY

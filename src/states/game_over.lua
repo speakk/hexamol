@@ -11,7 +11,7 @@ function state:enter(from)
 
   Concord.entity(self.world)
     :give("helium", {
-      ui_def = require 'ui.game_over',
+      ui_element = require 'ui.elements.game_over'({}, push:getDimensions()),
       active = true
     })
 end
@@ -24,7 +24,7 @@ function state:draw()
   self.from:draw()
 
   self.world:emit("draw")
-  love.graphics.print("GAME OVER")
+  --love.graphics.print("GAME OVER STATE INIT")
 end
 
 return state
