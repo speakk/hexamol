@@ -10,6 +10,7 @@ return Class {
     self.draw_func = options.draw_func or error("Element needs draw_func")
     self.transform_func = options.transform_func or function(x, y) return x, y end
     self.onClick = options.onClick
+    self.margin = options.margin
   end,
   draw = function(self, x, y)
     self:draw_func(x, y)

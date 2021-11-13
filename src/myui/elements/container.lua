@@ -30,15 +30,31 @@ return Class {
       local padding = 10
       local totalVertical = 0
 
-      for _, child in ipairs(self.children) do
-        totalVertical = totalVertical + child.h + padding
+      for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+        totalVertical = totalVertical + child.h + padding + margin
       end
 
       local startY = self.h/2 - totalVertical/2
 
+      local totalMargin = 0
       for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+
+        totalMargin = totalMargin + margin
+
         child.x = self.w/2 - child.w/2
-        child.y = startY + ((i-1) * (child.h + padding))
+        child.y = startY + ((i-1) * (child.h + padding) + totalMargin)
       end
     end
   end

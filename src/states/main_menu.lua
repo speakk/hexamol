@@ -21,7 +21,6 @@ function state:update(dt)
 end
 
 function state:draw()
-  self.from:draw()
   self.world:emit("draw")
 end
 
@@ -36,3 +35,4 @@ function state:mouse_pressed(x, y, button)
 end
 
 return state
+

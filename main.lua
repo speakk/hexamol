@@ -37,6 +37,7 @@ Concord.utils.loadNamespace("src/systems", ECS.s)
 -- CONCORD CONFIG END --
 
 states = {
+  main_menu = require("states.main_menu"),
   in_game = require("states.in_game"),
   game_over = require("states.game_over")
 }
@@ -45,7 +46,7 @@ states = {
 
 --main_state_machine:set_state("in_game")
 
-Gamestate.switch(states.in_game)
+Gamestate.switch(states.main_menu)
 
 function love.update(dt)
   tick.update(dt)

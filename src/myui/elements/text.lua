@@ -20,13 +20,14 @@ return Class {
   init = function(self, options)
     options.draw_func = options.draw_func or draw_func
     self.font = options.font or love.graphics.getFont()
+    self.font = options.font or love.graphics.getFont()
     self.text = options.text or error("Text element needs text")
     options.w = self.font:getWidth(self.text)
     options.h = self.font:getHeight()
 
     BaseElement.init(self, options)
 
-    self.originalTextColor = { 1.0, 0.8, 0.3 }
+    self.originalTextColor = options.color or { 1.0, 0.8, 0.3 }
     self.textHoverColor = { 0.0, 0.2, 0.3 }
 
     self.currentTextColor = {}
