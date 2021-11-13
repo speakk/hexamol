@@ -16,15 +16,15 @@ local getMenu = function()
     layout = "vertical",
     w = 400,
     h = 400,
-    backgroundColor = {0.2, 0.7, 0.5}
+    backgroundColor = {0.2, 0.7, 0.5, 0.1}
   })
 
   fullscreenContainer:addChild(menu)
 
   menu:addChild(require 'myui.elements.button'(
     {
-      w = 100,
-      h = 100,
+      w = 200,
+      h = 50,
       text = "New Game",
       onClick = function()
         Gamestate.pop()
@@ -36,7 +36,7 @@ local getMenu = function()
   menu:addChild(require 'myui.elements.button'(
     {
       w = 100,
-      h = 100,
+      h = 50,
       text = "Quit",
       onClick = function(self, x, y)
         love.event.quit()

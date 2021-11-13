@@ -1,6 +1,8 @@
 local Class = require 'libs.hump.class'
 local BaseElement = require 'myui.elements.BaseElement'
 
+local font = love.graphics.newFont('media/fonts/ThaleahFat.ttf', 48, "mono")
+
 local function draw_func(self, x, y)
   love.graphics.setColor(self.currentColor)
   love.graphics.rectangle(
@@ -12,8 +14,17 @@ local function draw_func(self, x, y)
   )
 
   if self.text then
-    love.graphics.setColor(0,0.0,0.6,1)
-    love.graphics.print(self.text, self.x + (x or 0), self.y + (x or 0))
+    local w = font:getWidth(self.text)
+    local h = font:getHeight()
+    if (self.currentTextColor) then
+      love.graphics.setColor(self.currentTextColor)
+    end
+    --love.graphics.print(self.text, self.x + (x or 0), self.y + (y or 0))
+    --love.graphics.print(self.text, self.x/2 - realW/2 + (x or 0), self.y + (y or 0))
+    local textX = self.x + x + ((self.w - w) / 2)
+    local textY = self.y + y + ((self.h - h) / 2)
+    love.graphics.setFont(font)
+    love.graphics.print(self.text, textX, textY)
   end
 
   for _, element in ipairs(self.children) do
@@ -31,18 +42,23 @@ local Button = Class {
     self.debugName = "button"
     self.originalColor = { 0.6, 0.4, 0.3 }
     self.hoverColor = { 0.8, 0.8, 0.5 }
-    self.textColor = { 1.0, 0.8, 0.3 }
+    self.originalTextColor = { 1.0, 0.8, 0.3 }
+    self.textHoverColor = { 0.0, 0.2, 0.3 }
 
     self.currentColor = {}
     for i=1,3 do self.currentColor[i] = self.originalColor[i] end
+    self.currentTextColor = {}
+    for i=1,3 do self.currentTextColor[i] = self.originalTextColor[i] end
   end,
   onHover = function(self, x, y)
     --print("HOVERED!")
     for i=1,3 do self.currentColor[i] = self.hoverColor[i] end
+    for i=1,3 do self.currentTextColor[i] = self.textHoverColor[i] end
   end,
   onHoverOut = function(self, x, y)
     --print("Hover out!")
     for i=1,3 do self.currentColor[i] = self.originalColor[i] end
+    for i=1,3 do self.currentTextColor[i] = self.originalTextColor[i] end
   end
 }
 

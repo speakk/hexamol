@@ -19,7 +19,6 @@ return Class {
     table.insert(self.children, child)
   end,
   isInElement = function(self, x, y)
-    --print("Checking if in element...", x, y, "against", self.x, self.y)
     return
       x > self.x and
       x < self.x + self.w and
