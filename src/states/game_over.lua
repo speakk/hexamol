@@ -31,4 +31,8 @@ function state:debugDraw()
   self.world:emit("debugDraw")
 end
 
+function state:resize(w, h)
+  self.world:emit("resize", w, h)
+end
+
 return state
