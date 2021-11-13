@@ -84,4 +84,8 @@ function love.draw()
   --main_state_machine:draw()
   Gamestate.current():draw()
   push:finish()
+
+  if (Gamestate.current().debugDraw) then
+    Gamestate.current():debugDraw()
+  end
 end

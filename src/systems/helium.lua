@@ -8,6 +8,7 @@ function HeliumSystem:init()
     print("Activating and drawing...")
 
     entity.helium.scene:activate()
+    entity.helium.scene:setPixelScale(push._SCALE.x, push._SCALE.y)
     entity.helium.ui_element:draw()
     entity.helium.scene:draw()
 
@@ -47,9 +48,20 @@ end
 
 function HeliumSystem:resize(w, h)
   for _, entity in ipairs(self.pool) do
+    entity.helium.scene:setPixelScale(push._SCALE.x, push._SCALE.x)
     entity.helium.ui_element:draw()
     entity.helium.scene:resize(w, h)
   end
+end
+
+function HeliumSystem:debugDraw()
+  for _, entity in ipairs(self.pool) do
+    if entity.helium.active then
+      entity.helium.scene:drawInputBoxes()
+    end
+    --print("DRAWING")
+  end
+
 end
 
 return HeliumSystem
