@@ -58,9 +58,10 @@ function HeliumSystem:resize(w, h)
 end
 
 function HeliumSystem:mouse_moved(x, y)
-  local realX, realY = push:toReal(x, y)
+  local realX, realY = push:toGame(x, y)
   for _, entity in ipairs(self.pool) do
     entity.helium.ui_element:mousemoved(realX, realY)
+    --entity.helium.ui_element:mousemoved(x, y)
   end
 end
 

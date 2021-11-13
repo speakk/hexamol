@@ -28,6 +28,7 @@ local Button = Class {
     BaseElement.init(self, options)
 
     self.text = options.text
+    self.debugName = "button"
   end,
   onHover = function(self, x, y)
     print("HOVERED!")

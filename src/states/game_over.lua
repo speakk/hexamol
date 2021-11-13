@@ -6,10 +6,10 @@ local getMenu = function()
     y = 100,
     w = 400,
     h = 400,
-    children = {
-      require 'myui.elements.button'({ w = 100, h = 100, text = "New Game"}),
-    }
+    transform_func = function(x, y) return push:toReal(x, y) end
   })
+
+  menu:addChild(require 'myui.elements.button'({ w = 100, h = 100, text = "New Game"}))
 
   return menu
 end

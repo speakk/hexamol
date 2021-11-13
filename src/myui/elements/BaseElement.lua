@@ -18,6 +18,7 @@ return Class {
     table.insert(self.children, child)
   end,
   isInElement = function(self, x, y)
+    print("Checking if in element...", x, y, "against", self.x, self.y)
     return
       x > self.x and
       x < self.x + self.w and
@@ -25,10 +26,15 @@ return Class {
       y < self.y + self.h
   end,
   mousemoved = function(self, x, y)
-    print("mousemoved", x, y)
+    --local realX, realY = self.transform_func(x, y)
+    local selfX, selfY = self.transform_func(self.x, self.y)
+    print("um", selfX, selfY)
+    if not selfX or not selfY then return end
+    --print("mousemoved", x, y, self.debugName or "")
     for _, child in ipairs(self.children) do
+      
       -- TODO: Add transform stuff here? (like just add parent something)
-      child:mousemoved(x, y)
+      child:mousemoved(x - selfX, y - selfY)
     end
 
     if self:isInElement(x, y) then
