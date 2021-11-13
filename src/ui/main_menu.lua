@@ -34,7 +34,11 @@ return function()
       w = 200,
       h = 50,
       onClick = function()
-        --Gamestate.pop()
+        -- Workaround to make sure leave is called in in_game
+        local stateTack = Gamestate.getStack()
+        if #stateTack > 1 then
+          Gamestate.pop()
+        end
         Gamestate.switch(require('states.dummy'))
         Gamestate.switch(require('states.in_game'))
       end

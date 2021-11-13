@@ -70,6 +70,10 @@ function GS.pop(...)
 	return (to.resume or __NULL__)(to, pre, ...)
 end
 
+function GS.getStack()
+  return stack
+end
+
 function GS.current()
 	return stack[#stack]
 end
