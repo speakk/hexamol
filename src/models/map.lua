@@ -8,21 +8,43 @@ local function Hex(q, r)
   return Concord.entity():give("coordinates", q, r)
 end
 
-local function createGrid(self, radius, world)
+local function createHexEntity(self, q, r)
+  local x, y = self:getPixelCoordsFromHex(Hex(q, r))
+  local hex = Hex(q, r)
+  :give("sprite", hexagonSprite)
+  :give("position", x, y)
+  :give("layer", "map")
+  :give("color")
+  :give("position_delta")
+
+  return hex
+end
+
+local function createGrid(self, radius, world, shape)
   local map = {}
-  for q = -radius,radius do
-    local r1 = math.max(-radius, -q - radius)
-    local r2 = math.min(radius, -q + radius)
-    for r = r1,r2 do
-      local x, y = self:getPixelCoordsFromHex(Hex(q, r))
-      local hex = Hex(q, r)
-        :give("sprite", hexagonSprite)
-        :give("position", x, y)
-        :give("layer", "map")
-        :give("color")
-        :give("position_delta")
-      world:addEntity(hex)
-      table.insert(map, hex)
+
+  if not shape or shape == "hexagonal" then
+    for q = -radius,radius do
+      local r1 = math.max(-radius, -q - radius)
+      local r2 = math.min(radius, -q + radius)
+      for r = r1,r2 do
+        local hex = createHexEntity(self, q, r)
+        world:addEntity(hex)
+        table.insert(map, hex)
+      end
+    end
+  elseif shape == "square" then
+    local top = math.floor(-radius/2)
+    local left = math.floor(-radius/2)
+    local bottom = math.floor(radius/2)
+    local right = math.floor(radius/2)
+    for r=top,bottom do
+      local r_offset = math.floor(r/2)
+      for q=left-r_offset,right-r_offset do
+        local hex = createHexEntity(self, q, r)
+        world:addEntity(hex)
+        table.insert(map, hex)
+      end
     end
   end
 
@@ -140,11 +162,11 @@ local function indexToCoordinates(index)
 end
 
 local Map = Class {
-  init = function(self, x, y, radius, world)
+  init = function(self, x, y, radius, world, shape)
     self.x = x
     self.y = y
     self.hexSize = tileSize
-    self.grid = createGrid(self, radius, world)
+    self.grid = createGrid(self, radius, world, shape)
     self.entities = {}
 
     self.gridHash = {}

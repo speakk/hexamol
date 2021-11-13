@@ -6,7 +6,7 @@ vector = require "libs.hump.vector-light"
 tick = require "libs.tick"
 flux = require "libs.flux"
 
-local Gamestate = require "libs.hump.gamestate"
+Gamestate = require "libs.hump.gamestate"
 
 push = require "libs.push.push"
 

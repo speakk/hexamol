@@ -30,39 +30,38 @@ return function()
   }))
 
   menu:addChild(require 'myui.elements.button'(
-    {
-      w = 200,
-      h = 50,
-      onClick = function()
-        -- Workaround to make sure leave is called in in_game
-        local stateTack = Gamestate.getStack()
-        if #stateTack > 1 then
-          Gamestate.pop()
-        end
-        Gamestate.switch(require('states.dummy'))
-        Gamestate.switch(require('states.in_game'))
+  {
+    w = 200,
+    h = 50,
+    onClick = function()
+      -- Workaround to make sure leave is called in in_game
+      local stateTack = Gamestate.getStack()
+      if #stateTack > 1 then
+        Gamestate.pop()
       end
-    })):addChild(require 'myui.elements.text'(
-    {
-      text = "New Game",
-      font = font
-    }
-    ))
+      Gamestate.switch(require('states.dummy'))
+      Gamestate.switch(require('states.in_game'))
+    end
+  })):addChild(require 'myui.elements.text'(
+  {
+    text = "New Game",
+    font = font
+  }
+  ))
 
   menu:addChild(require 'myui.elements.button'(
-    {
-      w = 100,
-      h = 50,
-      onClick = function()
-        love.event.quit()
-      end
-    })):addChild(require 'myui.elements.text'(
-    {
-      text = "Quit",
-      font = font
-    }
-    ))
-
+  {
+    w = 100,
+    h = 50,
+    onClick = function()
+      love.event.quit()
+    end
+  })):addChild(require 'myui.elements.text'(
+  {
+    text = "Quit",
+    font = font
+  }
+  ))
   return fullscreenContainer
 end
 
