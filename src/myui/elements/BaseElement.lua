@@ -4,8 +4,8 @@ return Class {
   init = function(self, options)
     self.x = options.x or 0
     self.y = options.y or 0
-    self.w = options.w or error("Button needs property w (width)")
-    self.h = options.h or error("Button needs property h (height)")
+    self.w = options.w or error("Element needs property w (width)")
+    self.h = options.h or error("Element needs property h (height)")
     self.children = options.children or {}
     self.draw_func = options.draw_func or error("Element needs draw_func")
     self.transform_func = options.transform_func or function(x, y) return x, y end
@@ -13,10 +13,15 @@ return Class {
   end,
   draw = function(self, x, y)
     self:draw_func(x, y)
+    for _, element in ipairs(self.children) do
+      element:draw(self.x + (x or 0), self.y + (y or 0))
+    end
   end,
   addChild = function(self, child)
     child.transform_func = self.transform_func
     table.insert(self.children, child)
+
+    return child
   end,
   isInElement = function(self, x, y)
     return

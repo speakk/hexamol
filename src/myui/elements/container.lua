@@ -12,18 +12,6 @@ local function draw_func(self, x, y)
     self.h
     )
   end
-
-  for _, element in ipairs(self.children) do
-    element:draw(self.x + (x or 0), self.y + (y or 0))
-  end
-  -- for i, element in ipairs(self.children) do
-  --   if self.layout == "vertical" then
-  --     --local padding = 5
-  --     --element:draw(self.x, self.y + ((i-1) * (element.h + padding)))
-  --   else
-  --     element:draw(self.x + x, self.y + y)
-  --   end
-  -- end
 end
 
 return Class {

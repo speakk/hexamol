@@ -2,6 +2,8 @@ local state = {}
 
 local Gamestate = require "libs.hump.gamestate"
 
+local font = love.graphics.newFont('media/fonts/ThaleahFat.ttf', 48, "mono")
+
 local getMenu = function()
   local screenW, screenH = push:getDimensions()
 
@@ -25,23 +27,31 @@ local getMenu = function()
     {
       w = 200,
       h = 50,
-      text = "New Game",
       onClick = function()
         Gamestate.pop()
         Gamestate.switch(require('states.dummy'))
         Gamestate.switch(require('states.in_game'))
       end
-    }))
+    })):addChild(require 'myui.elements.text'(
+    {
+      text = "New Game",
+      font = font
+    }
+    ))
 
   menu:addChild(require 'myui.elements.button'(
     {
       w = 100,
       h = 50,
-      text = "Quit",
-      onClick = function(self, x, y)
+      onClick = function()
         love.event.quit()
       end
-    }))
+    })):addChild(require 'myui.elements.text'(
+    {
+      text = "Quit",
+      font = font
+    }
+    ))
 
   return fullscreenContainer
 end
