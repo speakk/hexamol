@@ -2,7 +2,7 @@ local Class = require 'libs.hump.class'
 local BaseElement = require 'myui.elements.BaseElement'
 
 local function draw_func(self, x, y)
-  love.graphics.setColor(1,0.6,0.6,1)
+  love.graphics.setColor(self.currentColor)
   love.graphics.rectangle(
     'fill',
     self.x + (x or 0),
@@ -29,9 +29,20 @@ local Button = Class {
 
     self.text = options.text
     self.debugName = "button"
+    self.originalColor = { 0.6, 0.4, 0.3 }
+    self.hoverColor = { 0.8, 0.8, 0.5 }
+    self.textColor = { 1.0, 0.8, 0.3 }
+
+    self.currentColor = {}
+    for i=1,3 do self.currentColor[i] = self.originalColor[i] end
   end,
   onHover = function(self, x, y)
-    print("HOVERED!")
+    --print("HOVERED!")
+    for i=1,3 do self.currentColor[i] = self.hoverColor[i] end
+  end,
+  onHoverOut = function(self, x, y)
+    --print("Hover out!")
+    for i=1,3 do self.currentColor[i] = self.originalColor[i] end
   end
 }
 

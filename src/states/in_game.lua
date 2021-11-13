@@ -47,6 +47,11 @@ function in_game:draw()
   self.world:emit("draw")
 end
 
+function in_game:leave()
+  print("leave?")
+  self.world:clear()
+end
+
 function in_game:game_over(player_won)
   Gamestate.push(game_over)
 end

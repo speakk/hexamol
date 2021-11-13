@@ -33,7 +33,7 @@ end
 function HeliumSystem:update(dt)
   for _, entity in ipairs(self.pool) do
     if entity.helium.active then
-      --entity.helium.scene:update(dt)
+      entity.helium.ui_element:update(dt)
     end
   end
 end
@@ -58,11 +58,22 @@ function HeliumSystem:resize(w, h)
 end
 
 function HeliumSystem:mouse_moved(x, y)
+  print("Real x, y", x ,y)
   local realX, realY = push:toGame(x, y)
+  print("toGame x, y", realX, realY)
   for _, entity in ipairs(self.pool) do
-    entity.helium.ui_element:mousemoved(realX, realY)
+    entity.helium.ui_element:mouse_moved(realX, realY)
     --entity.helium.ui_element:mousemoved(x, y)
   end
+end
+
+function HeliumSystem:mouse_pressed(x, y, button)
+  local realX, realY = push:toGame(x, y)
+  for _, entity in ipairs(self.pool) do
+    entity.helium.ui_element:mouse_pressed(realX, realY, button)
+    --entity.helium.ui_element:mousemoved(x, y)
+  end
+
 end
 
 -- function HeliumSystem:debugDraw()
