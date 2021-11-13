@@ -2,14 +2,16 @@ local Class = require 'libs.hump.class'
 local BaseElement = require 'myui.elements.BaseElement'
 
 local function draw_func(self, x, y)
-  love.graphics.setColor(0,0.1,0.1,1)
-  love.graphics.rectangle(
+  if self.backgroundColor then
+    love.graphics.setColor(self.backgroundColor)
+    love.graphics.rectangle(
     'fill',
     self.x + (x or 0),
     self.y + (y or 0),
     self.w,
     self.h
-  )
+    )
+  end
 
   for _, element in ipairs(self.children) do
     element:draw(self.x + (x or 0), self.y + (y or 0))
@@ -31,13 +33,24 @@ return Class {
     BaseElement.init(self, options)
 
     self.layout = options.layout
+    self.backgroundColor = options.backgroundColor
   end,
   update = function(self)
+    BaseElement.update(self)
+
     if self.layout == "vertical" then
       local padding = 10
+      local totalVertical = 0
+
+      for _, child in ipairs(self.children) do
+        totalVertical = totalVertical + child.h + padding
+      end
+
+      local startY = self.h/2 - totalVertical/2
+
       for i, child in ipairs(self.children) do
-        child.x = 0
-        child.y = ((i-1) * (child.h + padding))
+        child.x = self.w/2 - child.w/2
+        child.y = startY + ((i-1) * (child.h + padding))
       end
     end
   end

@@ -3,14 +3,23 @@ local state = {}
 local Gamestate = require "libs.hump.gamestate"
 
 local getMenu = function()
-  local menu = require 'myui.elements.container'({
+  local screenW, screenH = push:getDimensions()
+
+  local fullscreenContainer = require 'myui.elements.container'({
     layout = "vertical",
-    x = 100,
-    y = 100,
-    w = 400,
-    h = 400,
+    w = screenW,
+    h = screenH,
     transform_func = function(x, y) return push:toGame(x, y) end
   })
+
+  local menu = require 'myui.elements.container'({
+    layout = "vertical",
+    w = 400,
+    h = 400,
+    backgroundColor = {0.2, 0.7, 0.5}
+  })
+
+  fullscreenContainer:addChild(menu)
 
   menu:addChild(require 'myui.elements.button'(
     {
@@ -34,7 +43,7 @@ local getMenu = function()
       end
     }))
 
-  return menu
+  return fullscreenContainer
 end
 
 function state:enter(from)
@@ -43,12 +52,12 @@ function state:enter(from)
   self.world = Concord.world()
 
   self.world:addSystems(
-    ECS.s.helium
+    ECS.s.ui
   )
 
   Concord.entity(self.world)
-    :give("helium", {
-      ui_element = getMenu(),
+    :give("ui", {
+      element = getMenu(),
       active = true
     })
 end

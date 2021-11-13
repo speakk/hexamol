@@ -5,7 +5,7 @@ return Class {
     self.x = options.x or 0
     self.y = options.y or 0
     self.w = options.w or error("Button needs property w (width)")
-    self.h = options.w or error("Button needs property h (height)")
+    self.h = options.h or error("Button needs property h (height)")
     self.children = options.children or {}
     self.draw_func = options.draw_func or error("Element needs draw_func")
     self.transform_func = options.transform_func or function(x, y) return x, y end
