@@ -17,7 +17,7 @@ local function draw_func(self, x, y)
   end
 
   for _, element in ipairs(self.children) do
-    element:draw(self.x, self.y)
+    element:draw(x + self.x, y + self.y)
   end
 end
 

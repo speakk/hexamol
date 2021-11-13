@@ -4,6 +4,7 @@ local Gamestate = require "libs.hump.gamestate"
 
 local getMenu = function()
   local menu = require 'myui.elements.container'({
+    layout = "vertical",
     x = 100,
     y = 100,
     w = 400,
@@ -13,15 +14,23 @@ local getMenu = function()
 
   menu:addChild(require 'myui.elements.button'(
     {
-      x = 50,
-      y = 50,
       w = 100,
       h = 100,
       text = "New Game",
-      onClick = function(self, x, y)
+      onClick = function()
         Gamestate.pop()
         Gamestate.switch(require('states.dummy'))
         Gamestate.switch(require('states.in_game'))
+      end
+    }))
+
+  menu:addChild(require 'myui.elements.button'(
+    {
+      w = 100,
+      h = 100,
+      text = "Quit",
+      onClick = function(self, x, y)
+        love.event.quit()
       end
     }))
 
