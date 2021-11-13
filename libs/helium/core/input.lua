@@ -364,7 +364,11 @@ function input.eventHandlers.textinput(text)
 	return captured
 end
 
-function input.eventHandlers.mousemoved(x, y, dx, dy)
+function input.eventHandlers.mousemoved(origX, origY, dx, dy)
+  local x, y = push:toGame(origX, origY)
+  --print(origX, x)
+  if not x then x = 0 end
+  if not y then y = 0 end
 	local captured = false
 
 	if input.subscriptions.hover then

@@ -1,5 +1,19 @@
 local state = {}
 
+local getMenu = function()
+  local menu = require 'myui.elements.container'({
+    x = 100,
+    y = 100,
+    w = 400,
+    h = 400,
+    children = {
+      require 'myui.elements.button'({ w = 100, h = 100, text = "New Game"}),
+    }
+  })
+
+  return menu
+end
+
 function state:enter(from)
   self.from = from
 
@@ -11,7 +25,7 @@ function state:enter(from)
 
   Concord.entity(self.world)
     :give("helium", {
-      ui_element = require 'ui.elements.game_over'({}, 640, 480),
+      ui_element = getMenu(),
       active = true
     })
 end
@@ -29,6 +43,10 @@ end
 
 function state:debugDraw()
   self.world:emit("debugDraw")
+end
+
+function state:mouse_moved(x, y)
+  self.world:emit("mouse_moved", x, y)
 end
 
 return state
