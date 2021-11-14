@@ -55,16 +55,15 @@ local PathFinder = Class {
     self.finder = AStar.new(map)
   end,
 
-  find_path = function(self, from, to, force_available_hexes, exclude_last)
-    --return self.finder:find(from, to)
+  find_path = function(self, from, to, range, force_available_hexes, exclude_last)
     -- TODO: Cache!
     local finder = createNewFinder(states.in_game.map, force_available_hexes)
     local path = finder:find(from, to)
     if path then
       if exclude_last then
-        table.remove(path)
+        table.remove(table.trim(path, range))
       end
-      return path
+      return table.trim(path, range)
     end
   end
 }

@@ -21,6 +21,7 @@ function PlaceCharacterSystem:place_character(options)
     :give("layer", "world")
     :give("can_be_selected")
     :give("can_be_moved")
+    :give("movement_range", 4)
     :give("is_in_team", options.team)
 
   self:getWorld():emit("place_entity_in_hex", entity, options.target_hex)

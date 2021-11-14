@@ -3,7 +3,8 @@ local PathFindingSystem = Concord.system({ selected = { "selected", "is_in_hex" 
 function PathFindingSystem:update(dt)
   for _, entity in ipairs(self.wantsPath) do
     -- TODO: Threaded / coroutines?
-    local path = states.in_game.path_finder:find_path(entity.wants_path.from, entity.wants_path.to)
+    local range = entity.movement_range and entity.movement_range.value or nil
+    local path = states.in_game.path_finder:find_path(entity.wants_path.from, entity.wants_path.to, range)
     if path then
       entity:give("has_path", path, entity.wants_path.finish_path_action)
       entity:remove("wants_path")

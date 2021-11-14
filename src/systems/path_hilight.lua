@@ -22,10 +22,11 @@ function PathHilightSystem:update(dt)
     for _, entity in ipairs(self.selected) do
       local from = entity.is_in_hex.hex
       local path
+      local range = entity.movement_range and entity.movement_range.value or nil
       if containsEnemies then
-        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex, { states.in_game.map.last_hovered_hex }, true)
+        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex, range, { states.in_game.map.last_hovered_hex }, true)
       else
-        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex)
+        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex, range)
       end
 
       if path then

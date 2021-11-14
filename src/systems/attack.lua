@@ -8,7 +8,10 @@ function AttackSystem:move_and_attack(options)
 
   print("move_and_attack")
 
-  local path = options.path or states.in_game.path_finder:find_path(options.by.is_in_hex.hex, options.against.is_in_hex.hex, { options.against.is_in_hex.hex },
+  local range = options.by.movement_range and options.by.movement_range.value or nil
+
+  local path = options.path or states.in_game.path_finder:find_path(options.by.is_in_hex.hex, options.against.is_in_hex.hex, range,
+    { options.against.is_in_hex.hex },
   true)
 
   if not path then
