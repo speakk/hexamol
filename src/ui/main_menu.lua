@@ -31,7 +31,7 @@ return function()
 
   menu:addChild(require 'myui.elements.button'(
   {
-    w = 200,
+    w = 380,
     h = 50,
     onClick = function()
       -- Workaround to make sure leave is called in in_game
@@ -40,11 +40,31 @@ return function()
         Gamestate.pop()
       end
       Gamestate.switch(require('states.dummy'))
-      Gamestate.switch(require('states.in_game'))
+      Gamestate.switch(require('states.in_game'), true)
     end
   })):addChild(require 'myui.elements.text'(
   {
-    text = "New Game",
+    text = "New Game (vs AI)",
+    font = font
+  }
+  ))
+
+  menu:addChild(require 'myui.elements.button'(
+  {
+    w = 480,
+    h = 50,
+    onClick = function()
+      -- Workaround to make sure leave is called in in_game
+      local stateTack = Gamestate.getStack()
+      if #stateTack > 1 then
+        Gamestate.pop()
+      end
+      Gamestate.switch(require('states.dummy'))
+      Gamestate.switch(require('states.in_game'), false)
+    end
+  })):addChild(require 'myui.elements.text'(
+  {
+    text = "New Game (vs Player)",
     font = font
   }
   ))

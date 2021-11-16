@@ -6,7 +6,7 @@ local game_over = require 'states.game_over'
 
 local in_game = {}
 
-function in_game:load_game(_)
+function in_game:load_game(options)
   self.world_width = 640
   self.world_height = 480
   self.world = Concord.world()
@@ -25,11 +25,11 @@ function in_game:load_game(_)
   self.map = Map(320, 240, 6, self.world)
   self.path_finder = PathFinder(self.map)
 
-  self.world:emit("initialize_map_entities")
+  self.world:emit("initialize_map_entities", options.against_ai)
 end
 
-function in_game:enter()
-  self:load_game()
+function in_game:enter(_, against_ai)
+  self:load_game({against_ai = against_ai})
 end
 
 function in_game:resize(w, h)

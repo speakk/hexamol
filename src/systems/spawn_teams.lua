@@ -55,24 +55,30 @@ function SpawnTeamsSystem:create_spawn_area(team1, team2)
   -- end
 end
 
-function SpawnTeamsSystem:initialize_map_entities()
-  local player = Concord.entity(self:getWorld())
+function SpawnTeamsSystem:initialize_map_entities(against_ai)
+  local team1 = Concord.entity(self:getWorld())
   :give("team", "player")
   :give("current_turn")
   :give("player_controlled")
   :give("color", 0.6, 1, 0.4)
   :give("action_points", 5)
 
-  local ai = Concord.entity(self:getWorld())
-  :give("team", "ai")
-  :give("ai_controlled")
+  local team2 = Concord.entity(self:getWorld())
   :give("color", 0.9, 0.7, 1.0)
   :give("action_points", 5)
 
-  self:spawn_base(player, true)
-  self:spawn_base(ai)
+  if (against_ai) then
+    team2:give("ai_controlled")
+    :give("team", "ai")
+  else
+    team2:give("player_controlled")
+    :give("team", "player2")
+  end
 
-  self:create_spawn_area(player, ai)
+  self:spawn_base(team1, true)
+  self:spawn_base(team2)
+
+  self:create_spawn_area(team1, team2)
 end
 
 
