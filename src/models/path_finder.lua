@@ -61,7 +61,7 @@ local PathFinder = Class {
     local path = finder:find(from, to)
     if path then
       if exclude_last then
-        table.remove(table.trim(path, range))
+        table.remove(table.trim(path, range+1))
       end
       return table.trim(path, range)
     end

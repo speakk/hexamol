@@ -38,6 +38,11 @@ end
 function AttackSystem:perform_attack(options)
   local by = options.by
   local against = options.against
+
+  local range = by.attack_range and by.attack_range.value or 1
+  local distance = Gamestate.current().map:getDistance(by.is_in_hex.hex, against.is_in_hex.hex)
+  if range < distance then return end
+
   self:getWorld():emit("do_damage", {
     against = against,
     damage = 50

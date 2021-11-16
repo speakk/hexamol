@@ -86,26 +86,43 @@ local actions = {
     isViable = function(self, team)
       local aiEntities = self:getTeamEntities(team)
       if not aiEntities or #aiEntities == 0 then return false end
-      local random_entity = table.pick_random(aiEntities)
 
       local enemies = functional.filter(self.all_in_map, function(entity)
         return entity.is_in_team.teamEntity ~= team
       end)
 
+      local enemiesInRangeMap = {}
+
+      local has_enemy_in_range = functional.filter(aiEntities, function(entity)
+        local enemies_in_range = functional.filter(enemies, function(enemy)
+          local is_in_range = Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy.is_in_hex.hex)
+          return is_in_range
+        end)
+
+        -- Just a small optimization, stores enemies in range for later
+        -- so we don't have to fetch them again
+        enemiesInRangeMap[entity] = enemies_in_range
+
+        return enemies_in_range and #enemies_in_range > 0
+      end)
+
       if not enemies or #enemies == 0 then return false end
+      if not has_enemy_in_range or #has_enemy_in_range == 0 then return false end
+
+      local random_entity = table.pick_random(has_enemy_in_range)
+      local random_enemy = table.pick_random(enemiesInRangeMap[random_entity])
 
       return {
         random_entity = random_entity,
-        enemies = enemies
+        random_enemy = random_enemy
       }
     end,
     run = function(self, team, data)
-      assert(data.enemies)
+      assert(data.random_enemy)
       assert(data.random_entity)
-      local enemies = data.enemies
+      local random_enemy = data.random_enemy
       local random_entity = data.random_entity
 
-      local random_enemy = table.pick_random(enemies)
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
         {
@@ -126,7 +143,11 @@ local actions = {
 
       local aiEntities = self:getTeamEntities(team)
       if not aiEntities or #aiEntities == 0 then return false end
-      local random_entity = table.pick_random(aiEntities)
+      local within_distance = functional.filter(aiEntities, function(entity)
+        return Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy_base.is_in_hex.hex) <= entity.movement_range.value
+      end)
+      if not within_distance or #within_distance == 0 then return false end
+      local random_entity = table.pick_random(within_distance)
 
       if not enemy_base then return false end
       if not random_entity then return false end

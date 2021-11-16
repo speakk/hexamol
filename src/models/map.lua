@@ -20,6 +20,14 @@ local function createHexEntity(self, q, r)
   return hex
 end
 
+local function axial_distance(a, b)
+  local coordA = a.coordinates
+  local coordB = b.coordinates
+  return ( math.abs(coordA.q - coordB.q)
+            + math.abs(coordA.q + coordA.r - coordB.q - coordB.r)
+            + math.abs(coordA.r - coordB.r)) / 2
+end
+
 local function createGrid(self, radius, world, shape)
   local map = {}
 
@@ -217,6 +225,12 @@ local Map = Class {
 
   getHexOccupants = function(self, hex)
     return self.entities[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)]
+  end,
+
+  getDistance = function(self, from, to)
+    local distance = axial_distance(from, to)
+    print("Distance", distance)
+    return distance
   end,
 
   reflectHexR = reflectR,
