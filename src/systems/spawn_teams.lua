@@ -2,11 +2,11 @@ local SpawnTeamsSystem = Concord.system({})
 
 local baseSprite = love.graphics.newImage("media/base.png")
 
-function SpawnTeamsSystem:spawn_base(team)
+function SpawnTeamsSystem:spawn_base(team, bottom)
   local q, r
   local color = team.color
 
-  if team.player_controlled then
+  if bottom then
     q, r = -3, 6
   else
     q, r = 3, -6
@@ -69,7 +69,7 @@ function SpawnTeamsSystem:initialize_map_entities()
   :give("color", 0.9, 0.7, 1.0)
   :give("action_points", 5)
 
-  self:spawn_base(player)
+  self:spawn_base(player, true)
   self:spawn_base(ai)
 
   self:create_spawn_area(player, ai)

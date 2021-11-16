@@ -1,6 +1,7 @@
 local turn_actions = require 'models.turn_actions'
 
-local MapClickHandlerSystem = Concord.system({ playerTeams = { "player_controlled", "team" }, isInMap = { "is_in_hex" }, selected = { "selected" } })
+local MapClickHandlerSystem = Concord.system({ playerTeams = { "player_controlled", "team", "current_turn" },
+  isInMap = { "is_in_hex" }, selected = { "selected" } })
 
 function MapClickHandlerSystem:handle_map_click(hex)
   local team = self.playerTeams[1]

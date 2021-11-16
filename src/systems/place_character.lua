@@ -1,4 +1,4 @@
-local PlaceCharacterSystem = Concord.system({})
+local PlaceCharacterSystem = Concord.system({ teams = { "team" }})
 
 local characterSprite = love.graphics.newImage("media/character_a.png")
 local characterSprite2 = love.graphics.newImage("media/character_b.png")
@@ -9,7 +9,8 @@ function PlaceCharacterSystem:place_character(options)
   print("Placing?", options.target_hex)
 
   local sprite = characterSprite
-  if options.team.ai_controlled then
+  local teamIndex = table.index_of(self.teams, options.team)
+  if teamIndex == 2 then
     sprite = characterSprite2
   end
 
