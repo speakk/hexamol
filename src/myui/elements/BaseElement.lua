@@ -2,6 +2,7 @@ local Class = require 'libs.hump.class'
 
 return Class {
   init = function(self, options)
+    self.id = options.id
     self.x = options.x or 0
     self.y = options.y or 0
     self.w = options.w or error("Element needs property w (width)")
@@ -21,6 +22,10 @@ return Class {
   addChild = function(self, child)
     child.transform_func = self.transform_func
     table.insert(self.children, child)
+
+    if child.id then
+      self.children[child.id] = child
+    end
 
     return child
   end,
