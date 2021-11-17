@@ -1,11 +1,10 @@
 local HealthSystem = Concord.system( { pool = { "health" }, bars = { "health_bar", "sprite" } } )
 
 local barSize = 32
-local dotAmount = 4
 local padding = 2
-local spacing = barSize / dotAmount
-local sizeX = math.floor((spacing) - padding)
 local sizeY = 4
+local minSpacing = 7
+local minSizeX = 7
 
 function HealthSystem:draw_bar(entity)
   local canvas = entity.sprite.value
@@ -18,9 +17,13 @@ function HealthSystem:draw_bar(entity)
   love.graphics.setCanvas(canvas)
   love.graphics.clear()
   love.graphics.setColor(0.8, 0.7, 0.7, 1)
-  local amount = (health.value / health.max) * dotAmount
+  local amount = health.value
+  local spacing = math.min(barSize / amount, minSpacing)
+  local sizeX = math.min(math.floor((spacing) - padding), minSizeX)
+  local finalWidth = amount * math.floor(spacing)
+  local startX = barSize/2 - finalWidth/2
   for i=1,amount do
-    love.graphics.rectangle("fill", (i-1) * math.floor(spacing), 0, sizeX, sizeY, 45)
+    love.graphics.rectangle("fill", startX + (i-1) * math.floor(spacing), 0, sizeX, sizeY, 45)
   --love.graphics.rectangle("fill", 0, 0, 100, 100)
   end
   love.graphics.setCanvas(previous_canvas)

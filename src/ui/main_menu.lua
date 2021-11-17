@@ -15,7 +15,7 @@ return function()
 
   local menu = require 'myui.elements.container'({
     layout = "vertical",
-    w = 400,
+    w = 530,
     h = 400,
     backgroundColor = {0.2, 0.7, 0.5, 0.1}
   })

@@ -45,7 +45,7 @@ function AttackSystem:perform_attack(options)
 
   self:getWorld():emit("do_damage", {
     against = against,
-    damage = 50
+    damage = 1
   })
 
   local finalPosX = (by.position.x + against.position.x) / 2

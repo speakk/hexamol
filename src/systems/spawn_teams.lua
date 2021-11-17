@@ -21,7 +21,7 @@ function SpawnTeamsSystem:spawn_base(team, bottom)
   :give("origin", 0.5, 0.9)
   :give("color", color.r, color.g, color.b)
   :give("is_in_team", team)
-  :give("health", 200)
+  :give("health", 6)
   :give("base")
 
   self:getWorld():emit("place_entity_in_hex", entity, targetHex)
