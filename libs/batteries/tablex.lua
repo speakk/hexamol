@@ -211,12 +211,11 @@ function tablex.weighted_random(t, r)
 	for _, weight in ipairs (t) do
 		sum = sum + weight
 	end
-	if sum == 0 then return end
-	local value = _random(0, sum, r)
+	local rnd = _random(nil, nil, r) * sum
 	sum = 0
 	for i, weight in ipairs (t) do
 		sum = sum + weight
-		if value <= sum then
+		if rnd <= sum then
 			return i, weight
 		end
 	end

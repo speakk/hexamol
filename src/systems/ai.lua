@@ -194,23 +194,6 @@ local actions = {
   }
 }
 
--- local function weighted_random(weights)
---     local sum = 0
---     for _, weight in ipairs (weights) do
---         sum = sum + weight
---     end
---     if sum == 0 then return end
---     local value = math.random (sum)
---     sum = 0
---     for i, weight in ipairs (weights) do
---         sum = sum + weight
---         if value <= sum then
---             return i, weight
---         end
---     end
--- end
-
-
 function AiSystem:do_random_action(team)
   local action_datas = {}
   local viable_actions = functional.filter(actions, function(action)
