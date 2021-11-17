@@ -6,7 +6,7 @@
 --so it works "as if" it was the global table api
 --upgraded with these routines
 
-local path = (...):gsub(".tablex", ".")
+local path = (...):gsub("tablex", "")
 local assert = require(path .. "assert")
 
 local tablex = setmetatable({}, {
@@ -60,7 +60,24 @@ function tablex.swap_and_pop(t, i)
 	tablex.swap(t, i, #t)
 	return tablex.pop(t)
 end
-	
+
+--rotate the elements of a table t by amount slots
+-- amount 1: {1, 2, 3, 4} -> {2, 3, 4, 1}
+-- amount -1: {1, 2, 3, 4} -> {4, 1, 2, 3}
+function tablex.rotate(t, amount)
+	if #t > 1 then
+		while amount >= 1 do
+			tablex.push(t, tablex.shift(t))
+			amount = amount - 1
+		end
+		while amount <= -1 do
+			tablex.unshift(t, tablex.pop(t))
+			amount = amount + 1
+		end
+	end
+	return t
+end
+
 --default comparison; hoisted for clarity
 --(shared with sort.lua and suggests the sorted functions below should maybe be refactored there)
 local function default_less(a, b)
@@ -183,6 +200,26 @@ function tablex.take_random(t, r)
 		return nil
 	end
 	return table.remove(t, tablex.random_index(t, r))
+end
+
+--return a random index based on weights provided
+function tablex.weighted_random(t, r)
+	if #t == 0 then
+		return nil
+	end
+	local sum = 0
+	for _, weight in ipairs (t) do
+		sum = sum + weight
+	end
+	if sum == 0 then return end
+	local value = _random(0, sum, r)
+	sum = 0
+	for i, weight in ipairs (t) do
+		sum = sum + weight
+		if value <= sum then
+			return i, weight
+		end
+	end
 end
 
 --shuffle the order of a table
@@ -398,6 +435,21 @@ end
 
 function tablex.unpack8(t)
 	return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8]
+end
+
+--internal: reverse iterator function
+local function _ripairs_iter(t, i)
+	i = i - 1
+	local v = t[i]
+	if v then
+		return i, v
+	end
+end
+
+--iterator that works like ipairs, but in reverse order, with indices from #t to 1
+--similar to ipairs, it will only consider sequential until the first nil value in the table.
+function tablex.ripairs(t)
+	return _ripairs_iter, t, #t + 1
 end
 
 return tablex

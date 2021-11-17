@@ -1,3 +1,5 @@
+local turn_actions = require 'models.turn_actions'
+
 local TurnActionSystem = Concord.system({ current_turn = { "current_turn", "team" }})
 
 function TurnActionSystem:take_turn_action(team, action, options)
@@ -10,24 +12,20 @@ function TurnActionSystem:take_turn_action(team, action, options)
     return
   end
 
+  local can_perform_action = turn_actions.can_perform_action(action, {
+    team = team,
+    unit = options and options.unit
+  }, self:getWorld())
+
+  print("Can perform?", can_perform_action)
+  if not can_perform_action then return end
+
   if action.currency_cost then
-    local holds_currency = currentTeam.holds_currency
-    print("holds_currency", holds_currency.value, action.currency_cost)
-    if holds_currency.value < action.currency_cost then
-      self:getWorld():emit("ran_out_of_currency", { team = team })
-      return
-    else
-      self:getWorld():emit("use_currency", { team = team, amount = action.currency_cost })
-    end
+    self:getWorld():emit("use_currency", { team = team, amount = action.currency_cost })
   end
 
   if action.action_point_cost then
-    if options.unit.action_points.value < action.action_point_cost then
-      self:getWorld():emit("no_action_points_left_for_unit", { unit = options.unit })
-      return
-    else
-      self:getWorld():emit("use_action_points", { unit = options.unit, amount = action.action_point_cost })
-    end
+    self:getWorld():emit("use_action_points", { unit = options.unit, amount = action.action_point_cost })
   end
 
   self:getWorld():emit(action.event_name, options, team)

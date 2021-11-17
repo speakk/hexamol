@@ -21,9 +21,9 @@ function AttackSystem:move_and_attack(options)
 
   -- TODO: Should we use take_turn_action here? Probably not
   -- In any case: Move entities close to target first
-  self:getWorld():emit("move_entities", {
+  self:getWorld():emit("move_entity", {
     path = path,
-    unit = { options.unit },
+    unit = options.unit,
     -- TODO: Make this do take_turn_action
     finish_path_action = {
       event_name = "perform_attack",

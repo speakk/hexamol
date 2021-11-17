@@ -39,11 +39,16 @@ local actions = {
     -- Random move
     isViable = function(self, team)
       local aiEntities = self:getTeamEntities(team)
-      if not aiEntities or #aiEntities == 0 then
+      local viable_entities = functional.filter(aiEntities, function(entity)
+        return turn_actions.can_perform_action(turn_actions.move_entity, {
+          team = team, unit = entity
+        }, self:getWorld())
+      end)
+      if not viable_entities or #viable_entities == 0 then
         return false
       end
 
-      return aiEntities
+      return viable_entities
     end,
     run = function(self, team, aiEntities)
       assert(aiEntities)
@@ -59,14 +64,17 @@ local actions = {
         )
       end
     end,
-    total_action_points = turn_actions.move_entity.action_points,
     weight = 1
   },
   {
     -- Random place
     isViable = function(self, team)
-      return self:getFreeSpawnHex(team)
-      --return states.in_game.map:getRandomFreeHex()
+      local can_perform_action = turn_actions.can_perform_action(turn_actions.place_character, { team = team }, self:getWorld())
+      if can_perform_action then
+        return self:getFreeSpawnHex(team)
+      else
+        return false
+      end
     end,
     run = function(self, team, randomHex)
       assert(randomHex)
@@ -78,7 +86,6 @@ local actions = {
         }
       )
     end,
-    total_action_points = turn_actions.place_character.action_points,
     weight = 1
   },
   {
@@ -91,9 +98,15 @@ local actions = {
         return entity.is_in_team.teamEntity ~= team
       end)
 
+      local can_perform_action = functional.filter(aiEntities, function(entity)
+        return turn_actions.can_perform_action(turn_actions.move_and_attack, {
+          team = team, unit = entity
+        }, self:getWorld())
+      end)
+
       local enemiesInRangeMap = {}
 
-      local has_enemy_in_range = functional.filter(aiEntities, function(entity)
+      local has_enemy_in_range = functional.filter(can_perform_action, function(entity)
         local enemies_in_range = functional.filter(enemies, function(enemy)
           local is_in_range = Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy.is_in_hex.hex)
           return is_in_range
@@ -105,6 +118,7 @@ local actions = {
 
         return enemies_in_range and #enemies_in_range > 0
       end)
+
 
       if not enemies or #enemies == 0 then return false end
       if not has_enemy_in_range or #has_enemy_in_range == 0 then return false end
@@ -126,12 +140,11 @@ local actions = {
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
         {
-          by = random_entity,
+          unit = random_entity,
           against = random_enemy
         }
       )
     end,
-    total_action_points = turn_actions.move_and_attack.action_points,
     weight = 1
   },
   {
@@ -143,7 +156,14 @@ local actions = {
 
       local aiEntities = self:getTeamEntities(team)
       if not aiEntities or #aiEntities == 0 then return false end
-      local within_distance = functional.filter(aiEntities, function(entity)
+
+      local can_perform_action = functional.filter(aiEntities, function(entity)
+        return turn_actions.can_perform_action(turn_actions.move_and_attack, {
+          team = team, unit = entity
+        }, self:getWorld())
+      end)
+
+      local within_distance = functional.filter(can_perform_action, function(entity)
         return Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy_base.is_in_hex.hex) <= entity.movement_range.value
       end)
       if not within_distance or #within_distance == 0 then return false end
@@ -164,7 +184,7 @@ local actions = {
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
         {
-          by = data.random_entity,
+          unit = data.random_entity,
           against = data.enemy_base
         }
       )
@@ -174,30 +194,26 @@ local actions = {
   }
 }
 
-local function weighted_random(weights)
-    local sum = 0
-    for _, weight in ipairs (weights) do
-        sum = sum + weight
-    end
-    if sum == 0 then return end
-    local value = math.random (sum)
-    sum = 0
-    for i, weight in ipairs (weights) do
-        sum = sum + weight
-        if value <= sum then
-            return i, weight
-        end
-    end
-end
+-- local function weighted_random(weights)
+--     local sum = 0
+--     for _, weight in ipairs (weights) do
+--         sum = sum + weight
+--     end
+--     if sum == 0 then return end
+--     local value = math.random (sum)
+--     sum = 0
+--     for i, weight in ipairs (weights) do
+--         sum = sum + weight
+--         if value <= sum then
+--             return i, weight
+--         end
+--     end
+-- end
 
 
 function AiSystem:do_random_action(team)
   local action_datas = {}
   local viable_actions = functional.filter(actions, function(action)
-    if action.total_action_points > team.action_points.value then
-      return false
-    end
-
     local action_data = action.isViable(self, team)
     if action_data then
       action_datas[action] = action_data
@@ -208,7 +224,7 @@ function AiSystem:do_random_action(team)
   if #viable_actions == 0 then return false end
 
   local weights = functional.map(viable_actions, function(action) return action.weight end)
-  local weightedIndex, _ = weighted_random(weights)
+  local weightedIndex, _ = table.weighted_random(weights)
 
   local action = viable_actions[weightedIndex]
   local _ = action.run(self, team, action_datas[action])
@@ -226,7 +242,7 @@ function AiSystem:update(dt)
     self.action_delay_timer = action_delay
   end
 
-  if current.action_points.value <= 0 or not viable_left then
+  if not viable_left then
     self:getWorld():emit("take_turn_action", current, turn_actions.end_turn)
   end
 end

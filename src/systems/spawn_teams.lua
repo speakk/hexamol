@@ -79,6 +79,10 @@ function SpawnTeamsSystem:initialize_map_entities(against_ai)
   self:spawn_base(team2)
 
   self:create_spawn_area(team1, team2)
+
+
+  -- TODO: Have initial turn start in gamestate
+  self:getWorld():emit("turn_starts", team1)
 end
 
 
