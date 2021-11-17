@@ -24,6 +24,7 @@ function PlaceCharacterSystem:place_character(options)
     :give("can_be_moved")
     :give("movement_range", 4)
     :give("is_in_team", options.team)
+    :give("action_points", 1)
 
   self:getWorld():emit("place_entity_in_hex", entity, options.target_hex)
   print("placed in...", options.target_hex.coordinates.q, options.target_hex.coordinates.r)

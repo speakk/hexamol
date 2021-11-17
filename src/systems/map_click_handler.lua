@@ -15,17 +15,17 @@ function MapClickHandlerSystem:handle_map_click(hex)
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
         {
-          by = self.selected[1],
+          unit = self.selected[1],
           against = entity_exists_in_hex,
         }
       )
     end
   elseif #(self.selected) > 0 then
     self:getWorld():emit("take_turn_action", team,
-      turn_actions.move_entities,
+      turn_actions.move_entity,
       {
         target_hex = hex,
-        entities = self.selected
+        unit = self.selected[1]
       }
     )
   elseif hex.spawn_hex and hex.spawn_hex.team == team then

@@ -61,11 +61,11 @@ function SpawnTeamsSystem:initialize_map_entities(against_ai)
   :give("current_turn")
   :give("player_controlled")
   :give("color", 0.6, 1, 0.4)
-  :give("action_points", 5)
+  :give("holds_currency", 2)
 
   local team2 = Concord.entity(self:getWorld())
   :give("color", 0.9, 0.7, 1.0)
-  :give("action_points", 5)
+  :give("holds_currency", 2)
 
   if (against_ai) then
     team2:give("ai_controlled")

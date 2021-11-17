@@ -24,7 +24,6 @@ function HealthSystem:draw_bar(entity)
   local startX = barSize/2 - finalWidth/2
   for i=1,amount do
     love.graphics.rectangle("fill", startX + (i-1) * math.floor(spacing), 0, sizeX, sizeY, 45)
-  --love.graphics.rectangle("fill", 0, 0, 100, 100)
   end
   love.graphics.setCanvas(previous_canvas)
   love.graphics.pop()
@@ -62,6 +61,7 @@ function HealthSystem:do_damage(options)
     end
   end
 
+  -- TODO: Just draw the one bar that changed
   for _, entity in ipairs(self.bars) do
     self:draw_bar(entity)
   end

@@ -4,14 +4,14 @@ return {
   },
   place_character = {
     event_name = "place_character",
-    action_points = 2
+    currency_cost = 1
   },
-  move_entities = {
-    event_name = "move_entities",
-    action_points = 1
+  move_entity = {
+    event_name = "move_entity",
+    action_point_cost = 1
   },
   move_and_attack = {
     event_name = "move_and_attack",
-    action_points = 1
+    action_point_cost = 1
   }
 }

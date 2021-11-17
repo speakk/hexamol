@@ -51,15 +51,15 @@ local actions = {
       local newRandomHex = states.in_game.map:getRandomFreeHex()
       if (newRandomHex) then
         self:getWorld():emit("take_turn_action", team,
-        turn_actions.move_entities,
+        turn_actions.move_entity,
         {
           target_hex = newRandomHex,
-          entities = { randomEntity }
+          unit = randomEntity
         }
         )
       end
     end,
-    total_action_points = turn_actions.move_entities.action_points,
+    total_action_points = turn_actions.move_entity.action_points,
     weight = 1
   },
   {
