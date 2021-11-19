@@ -15,12 +15,17 @@ function TurnSystem:end_turn(_, current_team)
   self:getWorld():emit("turn_starts", next_turn)
 end
 
-function TurnSystem:turn_starts(teamEntity)
-  print("Turn started:", teamEntity, teamEntity.ai_controlled)
+function TurnSystem:turn_starts(team)
+  print("Turn started:", team, team.ai_controlled)
 
-  if teamEntity.ai_controlled then
-    self:getWorld():emit("run_ai_turn", teamEntity)
+  if team.ai_controlled then
+    self:getWorld():emit("run_ai_turn", team)
   end
+
+  self:getWorld():emit("change_currency", {
+    team = team,
+    amount = 1
+  })
 end
 
 return TurnSystem

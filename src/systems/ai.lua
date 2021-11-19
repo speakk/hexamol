@@ -18,7 +18,7 @@ end
 
 function AiSystem:getTeamEntities(team)
   return functional.filter(self.in_team, function(entity)
-    if entity.is_in_team.teamEntity == team then
+    if entity.is_in_team.team == team then
       return true
     end
   end)
@@ -29,7 +29,7 @@ end
 
 local action_delay = 1
 
-function AiSystem:run_ai_turn(teamEntity)
+function AiSystem:run_ai_turn(_team)
   self.action_delay_timer = action_delay
   print("run_ai_turn", action_delay)
 end
@@ -95,7 +95,7 @@ local actions = {
       if not aiEntities or #aiEntities == 0 then return false end
 
       local enemies = functional.filter(self.all_in_map, function(entity)
-        return entity.is_in_team.teamEntity ~= team
+        return entity.is_in_team.team ~= team
       end)
 
       local can_perform_action = functional.filter(aiEntities, function(entity)
@@ -151,7 +151,7 @@ local actions = {
     -- Attack base
     isViable = function(self, team)
       local enemy_base = functional.find_match(self.bases, function(base)
-        return base.is_in_team.teamEntity ~= team
+        return base.is_in_team.team ~= team
       end)
 
       local aiEntities = self:getTeamEntities(team)
@@ -207,9 +207,8 @@ function AiSystem:do_random_action(team)
   if #viable_actions == 0 then return false end
 
   local weights = functional.map(viable_actions, function(action) return action.weight end)
-  local weightedIndex, _ = table.weighted_random(weights)
+  local action = table.pick_weighted_random(viable_actions, weights)
 
-  local action = viable_actions[weightedIndex]
   local _ = action.run(self, team, action_datas[action])
   return true
 end

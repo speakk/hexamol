@@ -8,7 +8,7 @@ function BaseSystem:kill_character(options)
 end
 
 function BaseSystem:base_destroyed(entity)
-  if entity.is_in_team.teamEntity.player_controlled then
+  if entity.is_in_team.team.player_controlled then
     self:getWorld():emit("game_over", true)
   else
     self:getWorld():emit("game_over", false)

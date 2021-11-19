@@ -15,7 +15,7 @@ end
 
 function ActionPointsSystem:turn_starts(team)
   for _, unit in ipairs(self.pool) do
-    if unit.is_in_team.teamEntity == team then
+    if unit.is_in_team.team == team then
       unit.action_points.value = unit.action_points.max
       self:getWorld():emit("action_points_changed", unit)
     end

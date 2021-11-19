@@ -35,19 +35,7 @@ function AttackSystem:move_and_attack(options)
   })
 end
 
-function AttackSystem:perform_attack(options)
-  local unit = options.unit
-  local against = options.against
-
-  local range = unit.attack_range and unit.attack_range.value or 1
-  local distance = Gamestate.current().map:getDistance(unit.is_in_hex.hex, against.is_in_hex.hex)
-  if range < distance then return end
-
-  self:getWorld():emit("do_damage", {
-    against = against,
-    damage = 1
-  })
-
+local function spawnAttackIcon(self, unit, against)
   local finalPosX = (unit.position.x + against.position.x) / 2
   local finalPosY = (unit.position.y + against.position.y) / 2
 
@@ -61,6 +49,24 @@ function AttackSystem:perform_attack(options)
   flux.to(attackIcon.scale, length, { value = 2 }):oncomplete(function()
     self:getWorld():emit("destroy_entity", { entity = attackIcon })
   end)
+
+end
+
+function AttackSystem:perform_attack(options)
+  local unit = options.unit
+  local against = options.against
+
+  local range = unit.attack_range and unit.attack_range.value or 1
+  local distance = Gamestate.current().map:getDistance(unit.is_in_hex.hex, against.is_in_hex.hex)
+  if range < distance then return end
+
+  self:getWorld():emit("do_damage", {
+    by = unit,
+    against = against,
+    damage = 1
+  })
+
+  spawnAttackIcon(self, unit, against)
 end
 
 return AttackSystem

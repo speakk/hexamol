@@ -9,9 +9,9 @@ function MapClickHandlerSystem:handle_map_click(hex)
   local entity_exists_in_hex = states.in_game.map:getHexOccupants(hex)
 
   if entity_exists_in_hex then
-    if entity_exists_in_hex.is_in_team.teamEntity == team and entity_exists_in_hex.can_be_selected then
+    if entity_exists_in_hex.is_in_team.team == team and entity_exists_in_hex.can_be_selected then
       self:getWorld():emit("select_entity", entity_exists_in_hex)
-    elseif #(self.selected) > 0 and entity_exists_in_hex.is_in_team.teamEntity ~= team then
+    elseif #(self.selected) > 0 and entity_exists_in_hex.is_in_team.team ~= team then
       self:getWorld():emit("take_turn_action", team,
         turn_actions.move_and_attack,
         {

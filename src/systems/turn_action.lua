@@ -21,7 +21,7 @@ function TurnActionSystem:take_turn_action(team, action, options)
   if not can_perform_action then return end
 
   if action.currency_cost then
-    self:getWorld():emit("use_currency", { team = team, amount = action.currency_cost })
+    self:getWorld():emit("change_currency", { team = team, amount = -action.currency_cost })
   end
 
   if action.action_point_cost then

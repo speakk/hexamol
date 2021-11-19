@@ -9,7 +9,7 @@ function PathHilightSystem:isEntityEnemy(entity)
   local playerTeam = self.player_controlled[1]
   if not playerTeam then return end
 
-  if entity.is_in_team.teamEntity ~= playerTeam then
+  if entity.is_in_team.team ~= playerTeam then
     return true
   end
 end
