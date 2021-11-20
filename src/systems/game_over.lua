@@ -1,7 +1,7 @@
 local GameOverSystem = Concord.system({})
 
-function GameOverSystem:game_over(player_won)
-  states.in_game:game_over(player_won)
+function GameOverSystem:game_over(winning_team)
+  states.in_game:game_over(winning_team)
 end
 
 return GameOverSystem

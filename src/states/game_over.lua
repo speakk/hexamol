@@ -1,6 +1,6 @@
 local state = {}
 
-function state:enter(from)
+function state:enter(from, options)
   self.from = from
 
   self.world = Concord.world()
@@ -11,7 +11,7 @@ function state:enter(from)
 
   Concord.entity(self.world)
     :give("ui", {
-      element = require 'ui.main_menu'(),
+      element = require 'ui.main_menu'(options),
       active = true
     })
 end

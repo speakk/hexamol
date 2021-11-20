@@ -4,15 +4,14 @@ function BaseSystem:kill_character(options)
   local entity = options.character
   if not entity.base then return end
 
-  self:getWorld():emit("base_destroyed", entity)
+  self:getWorld():emit("base_destroyed", {
+    by = options.by,
+    base = entity
+  })
 end
 
-function BaseSystem:base_destroyed(entity)
-  if entity.is_in_team.team.player_controlled then
-    self:getWorld():emit("game_over", true)
-  else
-    self:getWorld():emit("game_over", false)
-  end
+function BaseSystem:base_destroyed(options)
+  self:getWorld():emit("game_over", options.by.is_in_team.team)
 end
 
 return BaseSystem

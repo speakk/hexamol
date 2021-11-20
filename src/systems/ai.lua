@@ -86,7 +86,7 @@ local actions = {
         }
       )
     end,
-    weight = 1
+    weight = 0.2
   },
   {
     -- Random attack
@@ -190,7 +190,7 @@ local actions = {
       )
     end,
     total_action_points = turn_actions.move_and_attack.action_points,
-    weight = 3
+    weight = 4
   }
 }
 

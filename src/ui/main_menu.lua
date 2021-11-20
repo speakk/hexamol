@@ -3,7 +3,8 @@ local titleFont = love.graphics.newFont('media/fonts/ThaleahFat.ttf', 82, "mono"
 
 local Gamestate = require "libs.hump.gamestate"
 
-return function()
+return function(options)
+  options = options or {}
   local screenW, screenH = push:getDimensions()
 
   local fullscreenContainer = require 'myui.elements.container'({
@@ -22,8 +23,13 @@ return function()
 
   fullscreenContainer:addChild(menu)
 
+  local text = "HEXAMOL"
+  if options.game_finished then
+    text = options.winning_team.team.name .. " WON!"
+  end
+
   menu:addChild(require 'myui.elements.text'({
-    text = "HEXAMOL",
+    text = text,
     font = titleFont,
     margin = 20,
     color = { 1, 0.4, 0.2 }

@@ -53,8 +53,11 @@ function in_game:leave()
   self.world:clear()
 end
 
-function in_game:game_over(player_won)
-  Gamestate.push(game_over)
+function in_game:game_over(winning_team)
+  Gamestate.push(game_over, {
+    game_finished = true,
+    winning_team = winning_team
+  })
 end
 
 function in_game:key_pressed(key, scancode, isrepeat)

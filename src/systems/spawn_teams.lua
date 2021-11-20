@@ -27,7 +27,7 @@ function SpawnTeamsSystem:spawn_base(team, bottom)
   self:getWorld():emit("place_entity_in_hex", entity, targetHex)
 end
 
-function SpawnTeamsSystem:create_spawn_area(team1, team2)
+function SpawnTeamsSystem.create_spawn_area(_, team1, team2)
   for q=-6,-4 do
     for r=4,6 do
       local hex1 = states.in_game.map:getHex(q, r)
@@ -44,15 +44,6 @@ function SpawnTeamsSystem:create_spawn_area(team1, team2)
       hex4:give("spawn_hex", team2)
     end
   end
-
-  -- TODO: Here is where you continue
-  -- Check out the hovered coords, see what's up
-  -- for q=4,6 do
-  --   for r=2,-2 do
-  --     local hex = states.in_game.map:getHex(q, r)
-  --     hex:give("spawn_hex", team)
-  --   end
-  -- end
 end
 
 function SpawnTeamsSystem:initialize_map_entities(against_ai)
@@ -61,11 +52,11 @@ function SpawnTeamsSystem:initialize_map_entities(against_ai)
   :give("current_turn")
   :give("player_controlled")
   :give("color", 0.6, 1, 0.4)
-  :give("holds_currency", 2)
+  :give("holds_currency", 1)
 
   local team2 = Concord.entity(self:getWorld())
   :give("color", 0.9, 0.7, 1.0)
-  :give("holds_currency", 2)
+  :give("holds_currency", 1)
 
   if (against_ai) then
     team2:give("ai_controlled")
