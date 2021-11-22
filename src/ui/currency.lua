@@ -19,7 +19,7 @@ return function()
 
   container:addChild(require 'myui.elements.text'({
     id = "gold_count",
-    text = "",
+    text = "0",
     font = font,
     color = { 1, 0.4, 0.2 }
   }))

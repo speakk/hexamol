@@ -1,7 +1,11 @@
 local turn_actions = require 'models.turn_actions'
 
-local MapClickHandlerSystem = Concord.system({ playerTeams = { "player_controlled", "team", "current_turn" },
-  isInMap = { "is_in_hex" }, selected = { "selected" } })
+local MapClickHandlerSystem = Concord.system({
+  playerTeams = { "player_controlled", "team", "current_turn" },
+  isInMap = { "is_in_hex" },
+  selected = { "selected" },
+  ui_state = { "ui_state" }
+})
 
 function MapClickHandlerSystem:handle_map_click(hex)
   local team = self.playerTeams[1]
@@ -29,9 +33,11 @@ function MapClickHandlerSystem:handle_map_click(hex)
       }
     )
   elseif hex.spawn_hex and hex.spawn_hex.team == team then
+    print(self.ui_state[1])
     self:getWorld():emit("take_turn_action", team,
       turn_actions.place_character,
       {
+        assemblage = self.ui_state[1].ui_state.selected_character.assemblage,
         target_hex = hex,
         team = team
       }

@@ -1,4 +1,4 @@
-local ActionPointsSystem = Concord.system({ pool = { "action_points" }, bars = { "action_point_bar" } })
+local ActionPointsSystem = Concord.system({ pool = { "action_points", "is_in_hex" }, bars = { "action_point_bar" } })
 
 function ActionPointsSystem:use_action_points(options)
   local action_points = options.unit.action_points

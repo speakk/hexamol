@@ -78,11 +78,13 @@ local actions = {
     end,
     run = function(self, team, randomHex)
       assert(randomHex)
+      local characters = { require 'assemblages.character_a', require 'assemblages.character_b' }
       self:getWorld():emit("take_turn_action", team,
         turn_actions.place_character,
         {
           target_hex = randomHex,
-          team = team
+          team = team,
+          assemblage = table.pick_random(characters)
         }
       )
     end,

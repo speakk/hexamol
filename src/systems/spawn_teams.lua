@@ -49,7 +49,6 @@ end
 function SpawnTeamsSystem:initialize_map_entities(against_ai)
   local team1 = Concord.entity(self:getWorld())
   :give("team", "player")
-  :give("current_turn")
   :give("player_controlled")
   :give("color", 0.6, 1, 0.4)
   :give("holds_currency", 1)
@@ -73,7 +72,8 @@ function SpawnTeamsSystem:initialize_map_entities(against_ai)
 
 
   -- TODO: Have initial turn start in gamestate
-  self:getWorld():emit("turn_starts", team1)
+  --self:getWorld():__flush()
+  --self:getWorld():emit("turn_starts", team1)
 end
 
 

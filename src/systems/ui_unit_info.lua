@@ -1,8 +1,8 @@
 local UIUnitInfoSystem = Concord.system(
 {
-  action_points = { "action_points" },
+  action_points = { "action_points", "is_in_hex" },
   action_point_bars = { "action_point_bar" },
-  health = { "health" },
+  health = { "health", "is_in_hex" },
   health_bars = { "health_bar" }
 })
 

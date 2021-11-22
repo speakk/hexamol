@@ -1,8 +1,6 @@
 local Class = require 'libs.hump.class'
 local BaseElement = require 'myui.elements.BaseElement'
 
-local font = love.graphics.newFont('media/fonts/ThaleahFat.ttf', 48, "mono")
-
 local function draw_func(self, x, y)
   love.graphics.setColor(self.currentColor)
   love.graphics.rectangle(
@@ -30,14 +28,18 @@ return Class {
   onHover = function(self, x, y)
     for i=1,3 do self.currentColor[i] = self.hoverColor[i] end
     for _, child in ipairs(self.children) do
-      child:onHover(x, y)
+      if child.onHover then
+        child:onHover(x, y)
+      end
     end
   end,
   onHoverOut = function(self, x, y)
     --print("Hover out!")
     for i=1,3 do self.currentColor[i] = self.originalColor[i] end
     for _, child in ipairs(self.children) do
-      child:onHoverOut(x, y)
+      if child.onHoverOut then
+        child:onHoverOut(x, y)
+      end
     end
   end,
   update = function(self)

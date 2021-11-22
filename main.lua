@@ -15,7 +15,7 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 local windowWidth, windowHeight = love.window.getDesktopDimensions()
 windowWidth, windowHeight = windowWidth*.7, windowHeight*.7 --make the window a bit smaller than the screen itself
 
-push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = false, canvas = false })
+push:setupScreen(gameWidth, gameHeight, windowWidth, windowHeight, {fullscreen = false, resizable = true, pixelperfect = true, canvas = false })
 --push:setupCanvas({ { name = "action_points" } })
 
 -- Enable require without specifying 'src' in the beginning

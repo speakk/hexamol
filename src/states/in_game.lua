@@ -18,15 +18,16 @@ function in_game:load_game(options)
     ECS.s.ai, ECS.s.path_hilight, ECS.s.health, ECS.s.kill, ECS.s.action_points,
     ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex,
     ECS.s.path_finding, ECS.s.grid, ECS.s.sprite, ECS.s.debug,
+    ECS.s.spawn_teams,
     ECS.s.base, ECS.s.game_over, ECS.s.ui, ECS.s.parent_of, ECS.s.copy_transform,
-    ECS.s.currency, ECS.s.ui_currency, ECS.s.ui_unit_info,
-    ECS.s.spawn_teams
+    ECS.s.currency, ECS.s.ui_currency, ECS.s.ui_unit_info, ECS.s.ui_right_bar
   )
 
   self.map = Map(320, 240, 6, self.world)
   self.path_finder = PathFinder(self.map)
 
   self.world:emit("initialize_map_entities", options.against_ai)
+  self.world:emit("start_turn")
 end
 
 function in_game:enter(_, against_ai)

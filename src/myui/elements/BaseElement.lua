@@ -5,18 +5,27 @@ return Class {
     self.id = options.id
     self.x = options.x or 0
     self.y = options.y or 0
-    self.w = options.w or error("Element needs property w (width)")
-    self.h = options.h or error("Element needs property h (height)")
+    self.w = options.w or 0
+    self.h = options.h or 0
+    self.fillW = options.fillW
+    self.fillH = options.fillH
+    self.growH = options.growH
     self.children = options.children or {}
     self.draw_func = options.draw_func or error("Element needs draw_func")
     self.transform_func = options.transform_func or function(x, y) return x, y end
     self.onClick = options.onClick
-    self.margin = options.margin
+    self.margin = options.margin or 10
+
+    for key, prop in pairs(options) do
+      if self[key] == nil then
+        self[key] = prop
+      end
+    end
   end,
-  draw = function(self, x, y)
-    self:draw_func(x, y)
+  draw = function(self, x, y, parentW, parentH)
+    self:draw_func(x, y, parentW or self.w, parentH or self.h)
     for _, element in ipairs(self.children) do
-      element:draw(self.x + (x or 0), self.y + (y or 0))
+      element:draw(self.x + (x or 0), self.y + (y or 0), parentW or self.w, parentH or self.h)
     end
   end,
   addChild = function(self, child)
@@ -28,6 +37,19 @@ return Class {
     end
 
     return child
+  end,
+  removeChild = function(self, child)
+    for i, existingChild in ipairs(self.children) do
+      if existingChild == child then
+        table.remove(self.children, i)
+        return
+      end
+    end
+  end,
+  emptyChildren = function(self)
+    for i=#(self.children),1,-1 do
+      table.remove(self.children, i)
+    end
   end,
   isInElement = function(self, x, y)
     return
@@ -69,8 +91,25 @@ return Class {
     end
   end,
   update = function(self, dt)
+    if self.growH then
+      self.h = 0
+    end
+
     for _, child in ipairs(self.children) do
+      if child.fillW then
+        child.x = 0
+        child.w = self.w
+      end
+      if child.fillH then
+        child.y = 0
+        child.h = self.h
+      end
+
       child:update(dt)
+
+      if self.growH then
+        self.h = self.h + child.h + child.margin
+      end
     end
   end
 }
