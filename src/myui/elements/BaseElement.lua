@@ -2,6 +2,9 @@ local Class = require 'libs.hump.class'
 
 return Class {
   init = function(self, options)
+    for key, prop in pairs(options) do
+      self[key] = prop
+    end
     self.id = options.id
     self.x = options.x or 0
     self.y = options.y or 0
@@ -18,12 +21,6 @@ return Class {
     self.margin = options.margin or 0
     self.percentageW = options.percentageW
     self.percentageH = options.percentageH
-
-    for key, prop in pairs(options) do
-      if self[key] == nil then
-        self[key] = prop
-      end
-    end
   end,
   draw = function(self, x, y, parentW, parentH)
     if self.backgroundColor then

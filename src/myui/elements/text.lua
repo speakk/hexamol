@@ -23,15 +23,19 @@ return Class {
     BaseElement.init(self, options)
 
     self.originalTextColor = options.color or { 1.0, 0.8, 0.3 }
-    self.textHoverColor = { 0.0, 0.2, 0.3 }
+    --self.textHoverColor = { 0.0, 0.2, 0.3 }
 
     self.currentTextColor = {}
     for i=1,3 do self.currentTextColor[i] = self.originalTextColor[i] end
   end,
-  onHover = function(self, x, y)
-    for i=1,3 do self.currentTextColor[i] = self.textHoverColor[i] end
+  onHover = function(self)
+    if self.textHoverColor then
+      for i=1,3 do self.currentTextColor[i] = self.textHoverColor[i] end
+    end
   end,
-  onHoverOut = function(self, x, y)
-    for i=1,3 do self.currentTextColor[i] = self.originalTextColor[i] end
+  onHoverOut = function(self)
+    if self.textHoverColor then
+      for i=1,3 do self.currentTextColor[i] = self.originalTextColor[i] end
+    end
   end,
 }

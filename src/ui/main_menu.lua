@@ -55,7 +55,8 @@ return function(options)
   {
     text = "New Game (vs AI)",
     font = font,
-  }
+    textHoverColor = { 0.0, 0.2, 0.3 }
+    }
   ))
 
   menu:addChild(require 'myui.elements.button'(
@@ -75,7 +76,8 @@ return function(options)
   })):addChild(require 'myui.elements.text'(
   {
     text = "New Game (vs Player)",
-    font = font
+    font = font,
+    textHoverColor = { 0.0, 0.2, 0.3 }
   }
   ))
 
@@ -90,7 +92,8 @@ return function(options)
   })):addChild(require 'myui.elements.text'(
   {
     text = "Quit",
-    font = font
+    font = font,
+    textHoverColor = { 0.0, 0.2, 0.3 }
   }
   ))
   return fullscreenContainer
