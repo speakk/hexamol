@@ -16,6 +16,7 @@ return Class {
   __includes = BaseElement,
   init = function(self, options)
     options.draw_func = options.draw_func or draw_func
+    options.layout = options.layout or "horizontal"
     BaseElement.init(self, options)
 
     self.debugName = "button"
@@ -42,36 +43,4 @@ return Class {
       end
     end
   end,
-  update = function(self)
-    BaseElement.update(self)
-
-    -- HORIZONTAL LAYOUT BEGIN --
-    -- TODO: Move into helper
-    local padding = 5
-    local totalHorizontal = 0
-
-    for i, child in ipairs(self.children) do
-      local margin = 0
-      if i > 1 then
-        if self.children[i-1].margin then
-          margin = self.children[i-1].margin
-        end
-      end
-      totalHorizontal = totalHorizontal + child.w + padding + margin
-    end
-
-    local startX = self.w/2 - totalHorizontal/2
-
-    for i, child in ipairs(self.children) do
-      local margin = 0
-      if i > 1 then
-        if self.children[i-1].margin then
-          margin = self.children[i-1].margin
-        end
-      end
-
-      child.x = startX + ((i-1) * (child.w + (i > 1 and padding or 0) + margin))
-      child.y = self.h/2 - child.h/2
-    end
-  end
 }

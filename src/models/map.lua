@@ -175,6 +175,8 @@ local Map = Class {
     self.y = y
     self.hexSize = tileSize
     self.grid = createGrid(self, radius, world, shape)
+    self.radius = radius
+    self.shape = shape
     self.entities = {}
 
     self.gridHash = {}
@@ -229,7 +231,6 @@ local Map = Class {
 
   getDistance = function(self, from, to)
     local distance = axial_distance(from, to)
-    print("Distance", distance)
     return distance
   end,
 
@@ -264,8 +265,21 @@ local Map = Class {
     -- TODO Move the hex coloring somewhere else? Getting pretty crowded in here...
     local color_change_speed = 3.4
     local position_change_speed = 0.4
+    local origin_hex = self:getHex(0,0)
     for _, hex in ipairs(self.grid) do
-      local destR, destG, destB = 1,1,1
+      local distance
+      if hex.__cached_distance then
+        distance = hex.__cached_distance
+      else
+        distance = self:getDistance(origin_hex, hex)
+        if self.shape == "square" then
+          distance = distance*4
+        end
+        hex.__cached_distance = distance
+      end
+
+      local fadedColor = 1 - (distance/self.radius)*0.3
+      local destR, destG, destB = fadedColor, fadedColor, fadedColor
       local spawnHex = hex.spawn_hex
       if spawnHex then
         local color = spawnHex.team.color

@@ -7,6 +7,7 @@ return Class {
     self.y = options.y or 0
     self.w = options.w or 0
     self.h = options.h or 0
+    self.layout = options.layout
     self.fillW = options.fillW
     self.fillH = options.fillH
     self.growH = options.growH
@@ -109,6 +110,68 @@ return Class {
 
       if self.growH then
         self.h = self.h + child.h + child.margin
+      end
+    end
+
+    if self.layout == "vertical" then
+      local totalVertical = 0
+
+      for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+        totalVertical = totalVertical + child.h + margin
+      end
+
+      local startY = self.h/2 - totalVertical/2
+
+      local totalMargin = 0
+      for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+
+        totalMargin = totalMargin + margin
+
+        child.x = self.w/2 - child.w/2
+        child.y = startY + ((i-1) * (child.h + margin) + totalMargin)
+      end
+    end
+
+    if self.layout == "horizontal" then
+      local totalHorizontal = 0
+
+      for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+        totalHorizontal = totalHorizontal + child.w + margin
+      end
+
+      local startX = self.w/2 - totalHorizontal/2
+
+      local totalMargin = 0
+      for i, child in ipairs(self.children) do
+        local margin = 0
+        if i > 1 then
+          if self.children[i-1].margin then
+            margin = self.children[i-1].margin
+          end
+        end
+
+        totalMargin = totalMargin + margin
+
+        child.x = startX + ((i-1) * (child.w + margin) + totalMargin)
+        child.y = self.h/2 - child.h/2
       end
     end
   end
