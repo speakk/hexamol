@@ -2,18 +2,11 @@ local Class = require 'libs.hump.class'
 local BaseElement = require 'myui.elements.BaseElement'
 
 local function draw_func(self, x, y)
-  -- local w = self.font:getWidth(self.text)
-  -- local h = self.font:getHeight()
   if (self.currentTextColor) then
     love.graphics.setColor(self.currentTextColor)
   end
-  --love.graphics.print(self.text, self.x + (x or 0), self.y + (y or 0))
-  --love.graphics.print(self.text, self.x/2 - realW/2 + (x or 0), self.y + (y or 0))
-  -- local textX = self.x + x + ((self.w - w) / 2)
-  -- local textY = self.y + y + ((self.h - h) / 2)
   love.graphics.setFont(self.font)
   love.graphics.printf(self.text, self.x + x, self.y + y, self.w, self.align)
-  --love.graphics.print(self.text, self.x + x, self.y + y)
 end
 
 return Class {

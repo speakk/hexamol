@@ -35,10 +35,13 @@ return function(options)
     color = { 1, 0.4, 0.2 }
   }))
 
+  local buttonMargin = 10
+
   menu:addChild(require 'myui.elements.button'(
   {
     w = 380,
     h = 50,
+    margin = buttonMargin,
     onClick = function()
       -- Workaround to make sure leave is called in in_game
       local stateTack = Gamestate.getStack()
@@ -51,7 +54,7 @@ return function(options)
   })):addChild(require 'myui.elements.text'(
   {
     text = "New Game (vs AI)",
-    font = font
+    font = font,
   }
   ))
 
@@ -59,6 +62,7 @@ return function(options)
   {
     w = 480,
     h = 50,
+    margin = buttonMargin,
     onClick = function()
       -- Workaround to make sure leave is called in in_game
       local stateTack = Gamestate.getStack()
@@ -79,6 +83,7 @@ return function(options)
   {
     w = 100,
     h = 50,
+    margin = buttonMargin,
     onClick = function()
       love.event.quit()
     end

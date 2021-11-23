@@ -12,10 +12,12 @@ return Class {
     self.fillH = options.fillH
     self.growH = options.growH
     self.children = options.children or {}
-    self.draw_func = options.draw_func or error("Element needs draw_func")
+    self.draw_func = options.draw_func
     self.transform_func = options.transform_func or function(x, y) return x, y end
     self.onClick = options.onClick
-    self.margin = options.margin or 10
+    self.margin = options.margin or 0
+    self.percentageW = options.percentageW
+    self.percentageH = options.percentageH
 
     for key, prop in pairs(options) do
       if self[key] == nil then
@@ -24,7 +26,21 @@ return Class {
     end
   end,
   draw = function(self, x, y, parentW, parentH)
-    self:draw_func(x, y, parentW or self.w, parentH or self.h)
+    if self.backgroundColor then
+      love.graphics.setColor(self.backgroundColor)
+      love.graphics.rectangle(
+      'fill',
+      self.x + (x or 0),
+      self.y + (y or 0),
+      self.w,
+      self.h
+      )
+    end
+
+    if self.draw_func then
+      self:draw_func(x, y, parentW or self.w, parentH or self.h)
+    end
+
     for _, element in ipairs(self.children) do
       element:draw(self.x + (x or 0), self.y + (y or 0), parentW or self.w, parentH or self.h)
     end
@@ -105,6 +121,12 @@ return Class {
         child.y = 0
         child.h = self.h
       end
+      if child.percentageW then
+        child.w = self.w * child.percentageW
+      end
+      if child.percentageH then
+        child.h = self.h * child.percentageH
+      end
 
       child:update(dt)
 
@@ -117,30 +139,19 @@ return Class {
       local totalVertical = 0
 
       for i, child in ipairs(self.children) do
-        local margin = 0
-        if i > 1 then
-          if self.children[i-1].margin then
-            margin = self.children[i-1].margin
-          end
-        end
+        local margin = child.margin
+        if i == #self.children then margin = 0 end
         totalVertical = totalVertical + child.h + margin
       end
 
       local startY = self.h/2 - totalVertical/2
+      local currentY = startY
 
-      local totalMargin = 0
-      for i, child in ipairs(self.children) do
-        local margin = 0
-        if i > 1 then
-          if self.children[i-1].margin then
-            margin = self.children[i-1].margin
-          end
-        end
-
-        totalMargin = totalMargin + margin
-
+      for _, child in ipairs(self.children) do
         child.x = self.w/2 - child.w/2
-        child.y = startY + ((i-1) * (child.h + margin) + totalMargin)
+        child.y = currentY
+
+        currentY = currentY + child.h + child.margin
       end
     end
 
@@ -148,30 +159,19 @@ return Class {
       local totalHorizontal = 0
 
       for i, child in ipairs(self.children) do
-        local margin = 0
-        if i > 1 then
-          if self.children[i-1].margin then
-            margin = self.children[i-1].margin
-          end
-        end
+        local margin = child.margin
+        if i == #self.children then margin = 0 end
         totalHorizontal = totalHorizontal + child.w + margin
       end
 
       local startX = self.w/2 - totalHorizontal/2
+      local currentX = startX
 
-      local totalMargin = 0
-      for i, child in ipairs(self.children) do
-        local margin = 0
-        if i > 1 then
-          if self.children[i-1].margin then
-            margin = self.children[i-1].margin
-          end
-        end
-
-        totalMargin = totalMargin + margin
-
-        child.x = startX + ((i-1) * (child.w + margin) + totalMargin)
+      for _, child in ipairs(self.children) do
+        child.x = currentX
         child.y = self.h/2 - child.h/2
+
+        currentX = currentX + child.w + child.margin
       end
     end
   end

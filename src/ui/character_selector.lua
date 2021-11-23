@@ -1,4 +1,5 @@
 local font = love.graphics.newFont('media/fonts/m5x7.ttf', 16, "mono")
+local propFont = love.graphics.newFont('media/fonts/m5x7.ttf', 16, "mono")
 
 local function button_draw_func(self, x, y)
   love.graphics.setColor(self.currentColor)
@@ -35,10 +36,39 @@ local function createChild(character, select_character, is_selected)
     end
   })
 
-  button:addChild(require 'myui.elements.sprite'({
+  local spriteContainer = require 'myui.elements.container'({
+    layout = "vertical",
+    percentageW = 0.3,
+    growH = true
+  })
+
+  spriteContainer:addChild(require 'myui.elements.sprite'({
+    layout = "horizontal",
     sprite = character.entity.sprite.value,
-    fillH = true,
+    percentageW = 0.3,
+    scale = 0.5,
   }))
+
+  local propContainer = require 'myui.elements.container'({
+    layout = "vertical",
+    percentageW = 0.7,
+    growH = true
+  })
+
+  propContainer:addChild(require 'myui.elements.text'({
+    text = "Range: " .. character.entity.movement_range.value,
+    font = propFont,
+    color = { 1,1,1,1 }
+  }))
+
+  propContainer:addChild(require 'myui.elements.text'({
+    text = "Health: " .. character.entity.health.max,
+    font = propFont,
+    color = { 1,1,1,1 }
+  }))
+
+  button:addChild(spriteContainer)
+  button:addChild(propContainer)
 
   return button
 end
