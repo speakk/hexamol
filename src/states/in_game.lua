@@ -1,6 +1,8 @@
 local Map = require 'models.map'
 local PathFinder = require 'models.path_finder'
 
+local serpent = require 'libs.serpent'
+
 local Gamestate = require 'libs.hump.gamestate'
 local game_over = require 'states.game_over'
 
@@ -26,12 +28,20 @@ function in_game:load_game(options)
   self.map = Map(320, 240, 6, self.world)
   self.path_finder = PathFinder(self.map)
 
-  self.world:emit("initialize_map_entities", options.against_ai)
-  self.world:emit("start_turn")
+  if not options.load_previous then
+    self.world:emit("initialize_map_entities", options.against_ai)
+    self.world:emit("start_turn")
+  else
+    local dataString = love.filesystem.read("save_file")
+    local _, data = serpent.load(dataString)
+    print("Start deseralizing")
+    self.world:deserialize(data, false)
+    self.world:emit("game_loaded")
+  end
 end
 
-function in_game:enter(_, against_ai)
-  self:load_game({against_ai = against_ai})
+function in_game:enter(_, options)
+  self:load_game(options)
 end
 
 function in_game:resize(w, h)
@@ -54,7 +64,7 @@ function in_game:leave()
   self.world:clear()
 end
 
-function in_game:game_over(winning_team)
+function in_game.game_over(_, winning_team)
   Gamestate.push(game_over, {
     game_finished = true,
     winning_team = winning_team
@@ -67,6 +77,19 @@ function in_game:key_pressed(key, scancode, isrepeat)
 
   -- TODO: Game over test
   if key == 'g' then self.world:emit("game_over", false) end
+
+  if key == 'f5' then
+    local data = self.world:serialize()
+
+    print(inspect(data))
+    love.filesystem.write("save_file", serpent.block(data))
+  end
+
+  if key == 'f9' then
+    local dataString = love.filesystem.read("save_file")
+    local _, data = serpent.load(dataString)
+    self.world:deserialize(data, true)
+  end
 end
 
 function in_game:mouse_moved(x, y)

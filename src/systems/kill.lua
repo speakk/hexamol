@@ -7,10 +7,10 @@ end
 
 -- TODO: Rewards somewhere else
 function KillSystem:reward_killer(options)
-  self:getWorld():emit("change_currency", {
-    team = options.killer.is_in_team.team,
-    amount = 1
-  })
+  -- self:getWorld():emit("change_currency", {
+  --   team = options.killer.is_in_team.team,
+  --   amount = 1
+  -- })
 end
 
 function KillSystem.destroy_entity(_, options)

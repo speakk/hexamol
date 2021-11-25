@@ -11,6 +11,7 @@ return function(options)
     backgroundColor = {0.2, 0.7, 0.5, 0.1},
     transform_func = function(x, y) return push:toGame(x, y) end
   })
+  print("making right_bar")
 
   container:addChild(require 'ui.character_selector'({
     id = "characterSelector",

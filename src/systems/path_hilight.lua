@@ -9,7 +9,7 @@ function PathHilightSystem:isEntityEnemy(entity)
   local playerTeam = self.player_controlled[1]
   if not playerTeam then return end
 
-  if entity.is_in_team.team ~= playerTeam then
+  if entity.is_in_team:fetch(self:getWorld()) ~= playerTeam then
     return true
   end
 end
@@ -20,7 +20,7 @@ function PathHilightSystem:update(dt)
     local containsEnemies = self:isEntityEnemy(hexEntity)
 
     for _, entity in ipairs(self.selected) do
-      local from = entity.is_in_hex.hex
+      local from = entity.is_in_hex:fetch(self:getWorld())
       local path
       local range = entity.movement_range and entity.movement_range.value or nil
       if containsEnemies then

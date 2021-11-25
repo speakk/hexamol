@@ -11,7 +11,7 @@ function BaseSystem:kill_character(options)
 end
 
 function BaseSystem:base_destroyed(options)
-  self:getWorld():emit("game_over", options.by.is_in_team.team)
+  self:getWorld():emit("game_over", options.by.is_in_team:fetch(self:getWorld()))
 end
 
 return BaseSystem

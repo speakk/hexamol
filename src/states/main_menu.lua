@@ -21,6 +21,9 @@ function state:enter(from)
       element = require 'ui.main_menu'(),
       active = true
     })
+    :remove("serializable")
+
+  self.world:emit("initialize_map_entities")
 end
 
 function state:update(dt)

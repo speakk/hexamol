@@ -1,12 +1,31 @@
 local turn_actions = require 'models.turn_actions'
 local AiSystem = Concord.system({
   ai_teams = { "team", "ai_controlled" },
-  in_team = { "is_in_team", "can_be_moved" },
+  in_team = { "is_in_team", "is_in_hex" },
   bases = { "base" },
   current = { "current_turn", "team", "ai_controlled" },
   spawn_hexes = { "spawn_hex" },
   all_in_map = { "is_in_hex" }
 })
+
+function AiSystem:evaluate_game_state(team)
+  local ownPoints = 0
+  local othersPoints = 0
+
+  for _, entity in ipairs(self.in_team) do
+    local entityPoints = entity.health.value + entity.movement_range.value
+    if entity.base then
+      entityPoints = entityPoints + 10
+    end
+    if entity.is_in_team:fetch(self:getWorld()) == team then
+      ownPoints = ownPoints + entityPoints
+    else
+      othersPoints = othersPoints + entityPoints
+    end
+  end
+
+  return ownPoints - othersPoints
+end
 
 function AiSystem:getFreeSpawnHex(team)
   local teamHexes = functional.filter(self.spawn_hexes, function(hex)
@@ -18,7 +37,7 @@ end
 
 function AiSystem:getTeamEntities(team)
   return functional.filter(self.in_team, function(entity)
-    if entity.is_in_team.team == team then
+    if entity.is_in_team:fetch(self:getWorld()) == team then
       return true
     end
   end)
@@ -64,7 +83,7 @@ local actions = {
         )
       end
     end,
-    weight = 1
+    weight = 0.1
   },
   {
     -- Random place
@@ -97,7 +116,7 @@ local actions = {
       if not aiEntities or #aiEntities == 0 then return false end
 
       local enemies = functional.filter(self.all_in_map, function(entity)
-        return entity.is_in_team.team ~= team
+        return entity.is_in_team:fetch(self:getWorld()) ~= team
       end)
 
       local can_perform_action = functional.filter(aiEntities, function(entity)
@@ -110,7 +129,7 @@ local actions = {
 
       local has_enemy_in_range = functional.filter(can_perform_action, function(entity)
         local enemies_in_range = functional.filter(enemies, function(enemy)
-          local is_in_range = Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy.is_in_hex.hex)
+          local is_in_range = Gamestate.current().map:getDistance(entity.is_in_hex:fetch(self:getWorld()), enemy.is_in_hex:fetch(self:getWorld()))
           return is_in_range
         end)
 
@@ -147,13 +166,13 @@ local actions = {
         }
       )
     end,
-    weight = 1
+    weight = 0.5
   },
   {
     -- Attack base
     isViable = function(self, team)
       local enemy_base = functional.find_match(self.bases, function(base)
-        return base.is_in_team.team ~= team
+        return base.is_in_team:fetch(self:getWorld()) ~= team
       end)
 
       local aiEntities = self:getTeamEntities(team)
@@ -165,11 +184,12 @@ local actions = {
         }, self:getWorld())
       end)
 
-      local within_distance = functional.filter(can_perform_action, function(entity)
-        return Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy_base.is_in_hex.hex) <= entity.movement_range.value
-      end)
-      if not within_distance or #within_distance == 0 then return false end
-      local random_entity = table.pick_random(within_distance)
+      -- local within_distance = functional.filter(can_perform_action, function(entity)
+      --   return Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy_base.is_in_hex.hex) <= entity.movement_range.value
+      -- end)
+      -- if not within_distance or #within_distance == 0 then return false end
+      --local random_entity = table.pick_random(within_distance)
+      local random_entity = table.pick_random(can_perform_action)
 
       if not enemy_base then return false end
       if not random_entity then return false end

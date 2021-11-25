@@ -24,14 +24,18 @@ function UIUnitInfoSystem:init(world)
     local action_points = entity.action_points
     local newCanvas = love.graphics.newCanvas((action_points.max) * actionPointSize, actionPointSize)
 
+    --entity:ensure("key")
+
     local action_point_bar = Concord.entity(world)
-    :give("sprite", newCanvas)
+    :give("sprite", nil, newCanvas)
     :give("layer", "icons")
     :give("position")
     :give("origin", 0.5, 11)
     :give("child_of", entity)
     :give("copy_transform", entity)
     :give("action_point_bar", entity)
+    :ensure("key")
+    :remove("serializable")
 
     -- TODO: Add check if already parent_of
     entity:give("parent_of", { action_point_bar })
@@ -42,14 +46,19 @@ function UIUnitInfoSystem:init(world)
   self.health.onAdded = function(_, entity)
     local newCanvas = love.graphics.newCanvas(barSize, sizeY)
 
+    --entity:ensure("key")
+    print("ent...", entity.base, entity.key and entity.key.value)
+
     local health_bar = Concord.entity(world)
-    :give("sprite", newCanvas)
+    :give("sprite", nil, newCanvas)
     :give("layer", "icons")
     :give("position")
     :give("origin", 0.5, -2)
     :give("child_of", entity)
     :give("copy_transform", entity)
     :give("health_bar", entity)
+    :ensure("key")
+    :remove("serializable")
 
     -- TODO: Add check if already parent_of
     entity:give("parent_of", { health_bar })
@@ -58,11 +67,11 @@ function UIUnitInfoSystem:init(world)
   end
 end
 
-function UIUnitInfoSystem.draw_action_point_bar(_, entity)
-  local canvas = entity.sprite.value
+function UIUnitInfoSystem:draw_action_point_bar(entity)
+  local canvas = entity.sprite:fetch()
   local previous_canvas = love.graphics.getCanvas()
 
-  local action_points = entity.action_point_bar.target_entity.action_points
+  local action_points = entity.action_point_bar:fetch(self:getWorld()).action_points
 
   local w, _ = canvas:getDimensions()
 
@@ -83,34 +92,34 @@ function UIUnitInfoSystem.draw_action_point_bar(_, entity)
   love.graphics.pop()
 end
 
-local findChild = function(pool, parent)
+local findChild = function(pool, parent, world)
   for _, child in ipairs(pool) do
-    if child.child_of.parent == parent then
+    if child.child_of:fetch(world) == parent then
       return child
     end
   end
 end
 
 function UIUnitInfoSystem:action_points_changed(parent_entity)
-  local entity = findChild(self.action_point_bars, parent_entity)
+  local entity = findChild(self.action_point_bars, parent_entity, self:getWorld())
   assert(entity, "No action point bar entity found for entity")
 
   self:draw_action_point_bar(entity)
 end
 
 function UIUnitInfoSystem:health_changed(parent_entity)
-  local entity = findChild(self.health_bars, parent_entity)
+  local entity = findChild(self.health_bars, parent_entity, self:getWorld())
 
   assert(entity, "No health bar entity found for entity")
 
   self:draw_health_bar(entity)
 end
 
-function UIUnitInfoSystem.draw_health_bar(_, entity)
-  local canvas = entity.sprite.value
+function UIUnitInfoSystem:draw_health_bar(entity)
+  local canvas = entity.sprite:fetch()
   local previous_canvas = love.graphics.getCanvas()
 
-  local health = entity.health_bar.target_entity.health
+  local health = entity.health_bar:fetch(self:getWorld()).health
 
   love.graphics.push('all')
   love.graphics.origin()

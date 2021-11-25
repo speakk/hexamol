@@ -17,17 +17,22 @@ function UIRightBarSystem:init(world)
     active = true
   })
 
+  print("Initialized UIRightBarSystem")
+
+  self.ui_entity:remove("serializable")
+
   -- TODO: Either make the ui_right_bar_state, or move ui_state out of this system
-  self.ui_state = Concord.entity(world):give("ui_state")
+  self.ui_state = Concord.entity(world):give("ui_state"):remove("serializable")
 
   self.characters_by_team = {}
+
 end
 
 function UIRightBarSystem:initialize_map_entities()
   for teamIndex, _ in ipairs(self.teams) do
     self.characters_by_team[teamIndex] = {}
     for _, assemblage in ipairs(characters) do
-      local entity = Concord.entity(self:getWorld()):assemble(assemblage, { teamIndex = teamIndex })
+      local entity = Concord.entity(self:getWorld()):assemble(assemblage, { teamIndex = teamIndex }):remove("serializable"):remove("position")
       table.insert(self.characters_by_team[teamIndex], {
         entity = entity,
         assemblage = assemblage
@@ -46,8 +51,10 @@ function UIRightBarSystem:spawn_character_selected(character)
     )
 end
 
-function UIRightBarSystem:turn_starts(team)
-  local teamIndex = table.index_of(self.teams, team)
+function UIRightBarSystem:setupCharacterState(team)
+  print("OK hm", #(self.teams), #(self.current_team))
+  local teamIndex = table.index_of(self.teams, team or self.current_team[1])
+  print("index", teamIndex)
   local teamCharacters = self.characters_by_team[teamIndex]
 
   self.ui_state.ui_state.selected_character = teamCharacters[1]
@@ -57,6 +64,15 @@ function UIRightBarSystem:turn_starts(team)
       teamCharacters,
       self.ui_state.ui_state.selected_character
       )
+end
+
+function UIRightBarSystem:turn_starts(team)
+  self:setupCharacterState(team)
+end
+
+function UIRightBarSystem:game_loaded()
+  self:initialize_map_entities()
+  self:setupCharacterState()
 end
 
 return UIRightBarSystem

@@ -1,21 +1,26 @@
 local Class = require 'libs.hump.class'
 
-local hexagonSprite = love.graphics.newImage("media/hexagon.png")
+local hexagonSprite = "media/hexagon.png"
 local spriteSize = 32
 local tileSize = spriteSize / 2 * 1.1
 
-local function Hex(q, r)
-  return Concord.entity():give("coordinates", q, r)
+local function Hex(q, r, world)
+  return Concord.entity(world):give("coordinates", q, r)
 end
 
-local function createHexEntity(self, q, r)
+local distanceCache = {}
+
+local function createHexEntity(self, q, r, world)
   local x, y = self:getPixelCoordsFromHex(Hex(q, r))
-  local hex = Hex(q, r)
+  local hex = Hex(q, r, world)
   :give("sprite", hexagonSprite)
   :give("position", x, y)
+  :give("origin", 0.5, 0.3)
   :give("layer", "map")
   :give("color")
+  :give("hex")
   :give("position_delta")
+  :ensure("key")
 
   return hex
 end
@@ -36,8 +41,7 @@ local function createGrid(self, radius, world, shape)
       local r1 = math.max(-radius, -q - radius)
       local r2 = math.min(radius, -q + radius)
       for r = r1,r2 do
-        local hex = createHexEntity(self, q, r)
-        world:addEntity(hex)
+        local hex = createHexEntity(self, q, r, world)
         table.insert(map, hex)
       end
     end
@@ -49,8 +53,7 @@ local function createGrid(self, radius, world, shape)
     for r=top,bottom do
       local r_offset = math.floor(r/2)
       for q=left-r_offset,right-r_offset do
-        local hex = createHexEntity(self, q, r)
-        world:addEntity(hex)
+        local hex = createHexEntity(self, q, r, world)
         table.insert(map, hex)
       end
     end
@@ -174,26 +177,32 @@ local Map = Class {
     self.x = x
     self.y = y
     self.hexSize = tileSize
-    self.grid = createGrid(self, radius, world, shape)
     self.radius = radius
     self.shape = shape
     self.entities = {}
+    self.world = world
 
+    self.grid = {}
     self.gridHash = {}
-
-    for _, hex in ipairs(self.grid) do
-      self.gridHash[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = hex
-    end
-
-    table.sort(self.grid, function(a, b)
-      local x1, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
-      local x2, y2 = pointy_hex_to_pixel(b, tileSize, self.x, self.y)
-      if y1 == y2 then return x1 < x2 end
-      return y1 < y2
-    end)
-
   end,
+  initialize_map_entities = function(self)
+    createGrid(self, self.radius, self.world, self.shape)
+    --self.grid = createGrid(self, self.radius, self.world, self.shape)
+    -- for _, hex in ipairs(self.grid) do
+    --   self.gridHash[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = hex
+    -- end
 
+    -- table.sort(self.grid, function(a, b)
+    --   local x1, y1 = pointy_hex_to_pixel(a, tileSize, self.x, self.y)
+    --   local x2, y2 = pointy_hex_to_pixel(b, tileSize, self.x, self.y)
+    --   if y1 == y2 then return x1 < x2 end
+    --   return y1 < y2
+    -- end)
+  end,
+  addHexToMap = function(self, hex)
+    self.gridHash[coordinatesToIndex(hex.coordinates.q, hex.coordinates.r)] = hex
+    table.insert(self.grid, hex)
+  end,
   getHexFromPixelCoords = function(self, x, y)
     if not x or not y then return nil end
     local q, r = pixel_to_pointy_hex(x, y, self.hexSize, self.x, self.y)
@@ -268,21 +277,23 @@ local Map = Class {
     local origin_hex = self:getHex(0,0)
     for _, hex in ipairs(self.grid) do
       local distance
-      if hex.__cached_distance then
-        distance = hex.__cached_distance
+      if distanceCache[hex] then
+        distance = distanceCache[hex]
       else
         distance = self:getDistance(origin_hex, hex)
         if self.shape == "square" then
           distance = distance*4
         end
-        hex.__cached_distance = distance
+        distanceCache[hex] = distance
       end
 
       local fadedColor = 1 - (distance/self.radius)*0.3
       local destR, destG, destB = fadedColor, fadedColor, fadedColor
-      local spawnHex = hex.spawn_hex
-      if spawnHex then
-        local color = spawnHex.team.color
+      local spawnHexTeam = hex.spawn_hex and hex.spawn_hex:fetch(self.world)
+      if spawnHexTeam then
+        --print("spawnHex", spawnHex, spawnHex.team.name)
+        -- XXX: SERIALIZE REFACTOR TODO, this probably did stuff
+        local color = spawnHexTeam.color
         destR, destG, destB = color.r, color.g, color.b
       end
       hex.color.r = math.min(hex.color.r + (color_change_speed * dt), destR)

@@ -49,7 +49,9 @@ return function(options)
         Gamestate.pop()
       end
       Gamestate.switch(require('states.dummy'))
-      Gamestate.switch(require('states.in_game'), true)
+      Gamestate.switch(require('states.in_game'), {
+        against_ai = true
+      })
     end
   })):addChild(require 'myui.elements.text'(
   {
@@ -71,7 +73,9 @@ return function(options)
         Gamestate.pop()
       end
       Gamestate.switch(require('states.dummy'))
-      Gamestate.switch(require('states.in_game'), false)
+      Gamestate.switch(require('states.in_game'), {
+        against_ai = false
+      })
     end
   })):addChild(require 'myui.elements.text'(
   {
@@ -80,6 +84,33 @@ return function(options)
     textHoverColor = { 0.0, 0.2, 0.3 }
   }
   ))
+
+  if love.filesystem.getInfo('save_file') then
+    menu:addChild(require 'myui.elements.button'(
+    {
+      w = 480,
+      h = 50,
+      margin = buttonMargin,
+      onClick = function()
+        -- Workaround to make sure leave is called in in_game
+        local stateTack = Gamestate.getStack()
+        if #stateTack > 1 then
+          Gamestate.pop()
+        end
+        Gamestate.switch(require('states.dummy'))
+        Gamestate.switch(require('states.in_game'), {
+          load_previous = true
+        })
+      end
+    })):addChild(require 'myui.elements.text'(
+    {
+      text = "Load previous save",
+      font = font,
+      textHoverColor = { 0.0, 0.2, 0.3 }
+    }
+    ))
+
+  end
 
   menu:addChild(require 'myui.elements.button'(
   {

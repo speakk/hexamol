@@ -14,6 +14,7 @@ function state:enter(from, options)
       element = require 'ui.main_menu'(options),
       active = true
     })
+    :remove("serializable")
 end
 
 function state:update(dt)

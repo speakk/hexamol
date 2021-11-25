@@ -10,6 +10,8 @@ Gamestate = require "libs.hump.gamestate"
 
 push = require "libs.push.push"
 
+assets = require 'src.models.assets'()
+
 local gameWidth, gameHeight = 640, 480 --fixed game resolution
 love.graphics.setDefaultFilter('nearest', 'nearest')
 local windowWidth, windowHeight = love.window.getDesktopDimensions()

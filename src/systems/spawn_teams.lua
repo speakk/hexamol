@@ -1,6 +1,6 @@
 local SpawnTeamsSystem = Concord.system({})
 
-local baseSprite = love.graphics.newImage("media/base.png")
+local baseSprite = "media/base.png"
 
 function SpawnTeamsSystem:spawn_base(team, bottom)
   local q, r
@@ -13,16 +13,18 @@ function SpawnTeamsSystem:spawn_base(team, bottom)
   end
 
   local targetHex = states.in_game.map:getHex(q, r)
+  print("team...", team)
 
   local entity = Concord.entity(self:getWorld())
   :give("sprite", baseSprite)
   :give("layer", "world")
   :give("position")
-  :give("origin", 0.5, 0.9)
+  :give("origin", 0.5, 0.8)
   :give("color", color.r, color.g, color.b)
   :give("is_in_team", team)
   :give("health", 6)
   :give("base")
+  :ensure("key")
 
   self:getWorld():emit("place_entity_in_hex", entity, targetHex)
 end
@@ -52,10 +54,12 @@ function SpawnTeamsSystem:initialize_map_entities(against_ai)
   :give("player_controlled")
   :give("color", 0.6, 1, 0.4)
   :give("holds_currency", 1)
+  :ensure("key")
 
   local team2 = Concord.entity(self:getWorld())
   :give("color", 0.9, 0.7, 1.0)
   :give("holds_currency", 1)
+  :ensure("key")
 
   if (against_ai) then
     team2:give("ai_controlled")

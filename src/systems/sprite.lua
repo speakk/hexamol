@@ -1,5 +1,3 @@
-local push = require "libs.push.push"
-
 local outlineShader = love.graphics.newShader('src/shaders/outline.fs')
 
 local SpriteSystem = Concord.system({ pool = {"position", "layer"}, camera = {"camera", "position" } })
@@ -101,27 +99,22 @@ function SpriteSystem:draw()
         local originX = entity.origin and entity.origin.x or 0.5
         local originY = entity.origin and entity.origin.y or 0.5
 
-        if (entity.sprite.quad) then
-          local _, _, w, h = entity.sprite.quad:getViewport()
-          love.graphics.draw(entity.sprite.value, entity.sprite.quad, position.x, position.y, rotate, scale, scale, w*originX, h*originY)
-        else
-          local w, h = entity.sprite.value:getDimensions()
+        local w, h = entity.sprite:fetch():getDimensions()
 
-          -- TODO: Move this outside this else statement
-          if (entity.selected) then
-            love.graphics.setShader(outlineShader)
-            local thickness = 1
-            if outlineShader:hasUniform("stepSize") then
-              outlineShader:send( "stepSize",{thickness/w,thickness/h} )
-            end
+        -- TODO: Move this outside this else statement
+        if (entity.selected) then
+          love.graphics.setShader(outlineShader)
+          local thickness = 1
+          if outlineShader:hasUniform("stepSize") then
+            outlineShader:send( "stepSize",{thickness/w,thickness/h} )
           end
-
-          local deltaX = entity.position_delta and entity.position_delta.x or 0
-          local deltaY = entity.position_delta and entity.position_delta.y or 0
-          local finalX = math.floor(position.x + deltaX)
-          local finalY = math.floor(position.y + deltaY)
-          love.graphics.draw(entity.sprite.value, finalX, finalY, rotate, scale, scale, w*originX, h*originY)
         end
+
+        local deltaX = entity.position_delta and entity.position_delta.x or 0
+        local deltaY = entity.position_delta and entity.position_delta.y or 0
+        local finalX = math.floor(position.x + deltaX)
+        local finalY = math.floor(position.y + deltaY)
+        love.graphics.draw(entity.sprite:fetch(), finalX, finalY, rotate, scale, scale, w*originX, h*originY)
 
         if (entity.selected) then
           love.graphics.setShader()

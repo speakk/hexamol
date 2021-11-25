@@ -44,7 +44,7 @@ local function createChild(character, select_character, is_selected)
 
   spriteContainer:addChild(require 'myui.elements.sprite'({
     layout = "horizontal",
-    sprite = character.entity.sprite.value,
+    sprite = character.entity.sprite:fetch(),
     percentageW = 0.3,
     scale = 0.5,
   }))

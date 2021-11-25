@@ -6,10 +6,15 @@ function UICurrencySystem:init(world)
     element = require 'ui.currency'(),
     active = true
   })
+  :remove("serializable")
 end
 
 function UICurrencySystem:turn_starts(team)
   self.ui_entity.ui.element.children.gold_count.text = "" .. team.holds_currency.value
+end
+
+function UICurrencySystem:game_loaded()
+  self.ui_entity.ui.element.children.gold_count.text = "" .. self.current_turn[1].holds_currency.value
 end
 
 function UICurrencySystem:currency_changed(entity)
