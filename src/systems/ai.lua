@@ -65,10 +65,6 @@ function AiSystem:getTeamEntities(team)
   end)
 end
 
-function AiSystem:init()
-  print("RESOURCE", self:getWorld():getResource("moo").soo)
-end
-
 local action_delay = 1
 
 function AiSystem:run_ai_turn(_team)
@@ -95,7 +91,7 @@ local actions = {
     run = function(self, team, aiEntities)
       assert(aiEntities)
       local randomEntity = table.pick_random(aiEntities)
-      local newRandomHex = states.in_game.map:getRandomFreeHex()
+      local newRandomHex = self:getWorld():getResource("map"):getRandomFreeHex()
       if (newRandomHex) then
         self:getWorld():emit("take_turn_action", team,
         turn_actions.move_entity,
@@ -149,10 +145,11 @@ local actions = {
       end)
 
       local enemiesInRangeMap = {}
+      local world = self:getWorld()
 
       local has_enemy_in_range = functional.filter(can_perform_action, function(entity)
         local enemies_in_range = functional.filter(enemies, function(enemy)
-          local is_in_range = Gamestate.current().map:getDistance(entity.is_in_hex:fetch(self:getWorld()), enemy.is_in_hex:fetch(self:getWorld()))
+          local is_in_range = world:getResource("map"):getDistance(entity.is_in_hex:fetch(world), enemy.is_in_hex:fetch(world))
           return is_in_range
         end)
 
@@ -207,11 +204,6 @@ local actions = {
         }, self:getWorld())
       end)
 
-      -- local within_distance = functional.filter(can_perform_action, function(entity)
-      --   return Gamestate.current().map:getDistance(entity.is_in_hex.hex, enemy_base.is_in_hex.hex) <= entity.movement_range.value
-      -- end)
-      -- if not within_distance or #within_distance == 0 then return false end
-      --local random_entity = table.pick_random(within_distance)
       local random_entity = table.pick_random(can_perform_action)
 
       if not enemy_base then return false end

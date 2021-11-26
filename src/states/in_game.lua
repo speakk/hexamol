@@ -14,7 +14,8 @@ function in_game:load_game(options)
   self.world = Concord.world()
   self.paused = false
 
-  self.world:setResource("moo", { soo = "doo" })
+  self.world:setResource("map", Map(320, 240, 6, self.world))
+  self.world:setResource("path_finder", PathFinder(self.world:getResource("map")))
 
   self.world:addSystems(
     ECS.s.input, ECS.s.player_input, ECS.s.hover_handler, ECS.s.click_handler,
@@ -26,9 +27,6 @@ function in_game:load_game(options)
     ECS.s.base, ECS.s.game_over, ECS.s.ui, ECS.s.parent_of, ECS.s.copy_transform,
     ECS.s.currency, ECS.s.ui_currency, ECS.s.ui_unit_info, ECS.s.ui_right_bar
   )
-
-  self.map = Map(320, 240, 6, self.world)
-  self.path_finder = PathFinder(self.map)
 
   if not options.load_previous then
     self.world:emit("initialize_map_entities", options.against_ai)

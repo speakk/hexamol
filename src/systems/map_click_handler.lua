@@ -10,7 +10,7 @@ local MapClickHandlerSystem = Concord.system({
 function MapClickHandlerSystem:handle_map_click(hex)
   local team = self.playerTeams[1]
 
-  local entity_exists_in_hex = states.in_game.map:getHexOccupants(hex)
+  local entity_exists_in_hex = self:getWorld():getResource("map"):getHexOccupants(hex)
 
   if entity_exists_in_hex then
     if entity_exists_in_hex.is_in_team:fetch(self:getWorld()) == team and entity_exists_in_hex.can_be_selected then

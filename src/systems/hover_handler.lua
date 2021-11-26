@@ -3,7 +3,7 @@ local push = require 'libs.push.push'
 local HoverHandlerSystem = Concord.system( {} )
 
 function HoverHandlerSystem:update()
-  local map = Gamestate.current().map
+  local map = self:getWorld():getResource("map")
   map:update()
   local mouseX, mouseY = love.mouse.getPosition()
   -- TODO: Change when you implement a camera

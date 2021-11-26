@@ -1,17 +1,17 @@
 local GridSystem = Concord.system({ hex = { 'hex' } })
 
-function GridSystem:init(_)
+function GridSystem:init(world)
   self.hex.onAdded = function(_, entity)
-    Gamestate.current().map:addHexToMap(entity)
+    world:getResource("map"):addHexToMap(entity)
   end
 end
 
-function GridSystem.frame_start(_, dt)
-  Gamestate.current().map:frameStart(dt)
+function GridSystem:frame_start(dt)
+  self:getWorld():getResource("map"):frameStart(dt)
 end
 
-function GridSystem.initialize_map_entities()
-  Gamestate.current().map:initialize_map_entities()
+function GridSystem:initialize_map_entities()
+  self:getWorld():getResource("map"):initialize_map_entities()
 end
 
 return GridSystem

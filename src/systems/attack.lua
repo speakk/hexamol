@@ -11,7 +11,7 @@ function AttackSystem:move_and_attack(options)
   local range = options.unit.movement_range and options.unit.movement_range.value or nil
 
   local world = self:getWorld()
-  local path = options.path or states.in_game.path_finder:find_path(options.unit.is_in_hex:fetch(world), options.against.is_in_hex:fetch(world), range,
+  local path = options.path or world:getResource("path_finder"):find_path(options.unit.is_in_hex:fetch(world), options.against.is_in_hex:fetch(world), range,
     { options.against.is_in_hex:fetch(world) },
   true)
 
@@ -58,7 +58,8 @@ function AttackSystem:perform_attack(options)
   local against = options.against
 
   local range = unit.attack_range and unit.attack_range.value or 1
-  local distance = Gamestate.current().map:getDistance(unit.is_in_hex:fetch(self:getWorld()), against.is_in_hex:fetch(self:getWorld()))
+  local world = self:getWorld()
+  local distance = world:getResource("map"):getDistance(unit.is_in_hex:fetch(world), against.is_in_hex:fetch(world))
   if range < distance then return end
 
   self:getWorld():emit("do_damage", {

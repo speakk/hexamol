@@ -11,7 +11,7 @@ function MoveEntitySystem:move_entity(options)
     entity:give("wants_path", from, options.target_hex, options.finish_path_action)
     entity:remove("has_path")
   end
-  states.in_game.map:setLastFoundPath(nil)
+  self:getWorld():getResource("map"):setLastFoundPath(nil)
 end
 
 return MoveEntitySystem

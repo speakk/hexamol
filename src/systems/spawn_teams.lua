@@ -12,7 +12,7 @@ function SpawnTeamsSystem:spawn_base(team, bottom)
     q, r = 3, -6
   end
 
-  local targetHex = states.in_game.map:getHex(q, r)
+  local targetHex = self:getWorld():getResource("map"):getHex(q, r)
   print("team...", team)
 
   local entity = Concord.entity(self:getWorld())
@@ -29,19 +29,19 @@ function SpawnTeamsSystem:spawn_base(team, bottom)
   self:getWorld():emit("place_entity_in_hex", entity, targetHex)
 end
 
-function SpawnTeamsSystem.create_spawn_area(_, team1, team2)
+function SpawnTeamsSystem:create_spawn_area(team1, team2)
   for q=-6,-4 do
     for r=4,6 do
-      local hex1 = states.in_game.map:getHex(q, r)
-      local hex2Coords = states.in_game.map.reflectHexR(hex1)
-      local hex2 = states.in_game.map:getHex(hex2Coords.coordinates.q, hex2Coords.coordinates.r)
+      local hex1 = self:getWorld():getResource("map"):getHex(q, r)
+      local hex2Coords = self:getWorld():getResource("map").reflectHexR(hex1)
+      local hex2 = self:getWorld():getResource("map"):getHex(hex2Coords.coordinates.q, hex2Coords.coordinates.r)
       hex1:give("spawn_hex", team1)
       hex2:give("spawn_hex", team1)
 
-      local hex3Coords = states.in_game.map.reflectHexUp(hex1)
-      local hex4Coords = states.in_game.map.reflectHexUp(hex2)
-      local hex3 = states.in_game.map:getHex(hex3Coords.coordinates.q, hex3Coords.coordinates.r)
-      local hex4 = states.in_game.map:getHex(hex4Coords.coordinates.q, hex4Coords.coordinates.r)
+      local hex3Coords = self:getWorld():getResource("map").reflectHexUp(hex1)
+      local hex4Coords = self:getWorld():getResource("map").reflectHexUp(hex2)
+      local hex3 = self:getWorld():getResource("map"):getHex(hex3Coords.coordinates.q, hex3Coords.coordinates.r)
+      local hex4 = self:getWorld():getResource("map"):getHex(hex4Coords.coordinates.q, hex4Coords.coordinates.r)
       hex3:give("spawn_hex", team2)
       hex4:give("spawn_hex", team2)
     end

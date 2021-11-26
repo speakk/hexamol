@@ -7,12 +7,12 @@ function ClickHandlerSystem:handle_click(x, y, button)
       entity:remove("selected")
     end
 
-    states.in_game.map:setLastFoundPath()
+    self:getWorld():getResource("map"):setLastFoundPath()
     return
   end
 
   local screenX, screenY = push:toGame(x, y)
-  local hex = states.in_game.map:getHexFromPixelCoords(screenX, screenY)
+  local hex = self:getWorld():getResource("map"):getHexFromPixelCoords(screenX, screenY)
 
   if hex then
     self:getWorld():emit("handle_map_click", hex, button)

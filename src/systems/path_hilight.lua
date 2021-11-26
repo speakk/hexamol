@@ -15,22 +15,28 @@ function PathHilightSystem:isEntityEnemy(entity)
 end
 
 function PathHilightSystem:update(dt)
-  if states.in_game.map.last_hovered_hex then
-    local hexEntity = states.in_game.map:getHexOccupants(states.in_game.map.last_hovered_hex)
+  local world = self:getWorld()
+  if world:getResource("map").last_hovered_hex then
+    local hexEntity = world:getResource("map"):getHexOccupants(world:getResource("map").last_hovered_hex)
     local containsEnemies = self:isEntityEnemy(hexEntity)
 
     for _, entity in ipairs(self.selected) do
-      local from = entity.is_in_hex:fetch(self:getWorld())
+      local from = entity.is_in_hex:fetch(world)
       local path
       local range = entity.movement_range and entity.movement_range.value or nil
       if containsEnemies then
-        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex, range, { states.in_game.map.last_hovered_hex }, true)
+        path = world:getResource("path_finder"):find_path(
+          from,
+          world:getResource("map").last_hovered_hex,
+          range,
+          { world:getResource("map").last_hovered_hex },
+          true)
       else
-        path = states.in_game.path_finder:find_path(from, states.in_game.map.last_hovered_hex, range)
+        path = self:getWorld():getResource("path_finder"):find_path(from, world:getResource("map").last_hovered_hex, range)
       end
 
       if path then
-        states.in_game.map:setLastFoundPath(path)
+        world:getResource("map"):setLastFoundPath(path)
       end
     end
   end

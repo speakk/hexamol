@@ -7,14 +7,12 @@ function state:enter(from)
 
   self.world = Concord.world()
 
+  self.world:setResource("map", Map(320, 240, 28, self.world))
+
   self.world:addSystems(
     ECS.s.grid, ECS.s.sprite,
     ECS.s.ui, ECS.s.hover_handler
   )
-
-  self.map = Map(320, 240, 28, self.world, "square")
-  self.path_finder = PathFinder(self.map)
-
 
   Concord.entity(self.world)
     :give("ui", {

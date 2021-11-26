@@ -1,12 +1,13 @@
 local AStar = require 'libs.astar.astar'
 
-local cache = {}
+--local cache = {}
 
 -- local getCacheKey = function(from, to, force_target_available)
--- 
+--
 -- end
 
 local createNewFinder = function(gamestate_map, force_available_hexes)
+  print("Creating finder...", gamestate_map)
   local map = {}
 
   -- Return all neighbor nodes. Means a target that can be moved from the current node
@@ -53,11 +54,15 @@ local PathFinder = Class {
     end
 
     self.finder = AStar.new(map)
+    self.gamestate_map = gamestate_map
   end,
 
   find_path = function(self, from, to, range, force_available_hexes, exclude_last)
+    assert(from, "find_path needs 'from' argument")
+    assert(to, "find_path needs 'to' argument")
     -- TODO: Cache!
-    local finder = createNewFinder(states.in_game.map, force_available_hexes)
+    local finder = createNewFinder(self.gamestate_map, force_available_hexes)
+    print("from, to", from, to)
     local path = finder:find(from, to)
     if path then
       if exclude_last then
