@@ -14,6 +14,8 @@ function in_game:load_game(options)
   self.world = Concord.world()
   self.paused = false
 
+  self.world:setResource("moo", { soo = "doo" })
+
   self.world:addSystems(
     ECS.s.input, ECS.s.player_input, ECS.s.hover_handler, ECS.s.click_handler,
     ECS.s.map_click_handler, ECS.s.turn, ECS.s.attack, ECS.s.turn_action,

@@ -27,6 +27,28 @@ function AiSystem:evaluate_game_state(team)
   return ownPoints - othersPoints
 end
 
+function AiSystem:copy_world()
+  local current_world_data = self:getWorld():serialize()
+  local new_world = Concord.world()
+
+  new_world:addSystems(
+    ECS.s.turn, ECS.s.attack, ECS.s.turn_action,
+    ECS.s.ai, ECS.s.health, ECS.s.kill, ECS.s.action_points,
+    ECS.s.select_entity, ECS.s.move_entity, ECS.s.place_character, ECS.s.is_in_hex,
+    ECS.s.path_finding, ECS.s.grid,
+    ECS.s.spawn_teams,
+    ECS.s.base, ECS.s.parent_of,
+    ECS.s.currency
+  )
+
+  new_world:deserialize(current_world_data)
+  return new_world
+end
+
+function AiSystem:getViableMovesForCharacter(character)
+  --local hexesWithinRadius = Gamestate.h
+end
+
 function AiSystem:getFreeSpawnHex(team)
   local teamHexes = functional.filter(self.spawn_hexes, function(hex)
     return hex.spawn_hex:fetch(self:getWorld()) == team
@@ -43,7 +65,8 @@ function AiSystem:getTeamEntities(team)
   end)
 end
 
-function AiSystem.init()
+function AiSystem:init()
+  print("RESOURCE", self:getWorld():getResource("moo").soo)
 end
 
 local action_delay = 1
