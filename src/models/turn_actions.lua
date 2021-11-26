@@ -17,7 +17,6 @@ return {
   can_perform_action = function(action, options, world)
     if action.currency_cost then
       local holds_currency = options.team.holds_currency
-      print("holds_currency", holds_currency.value, action.currency_cost)
       if holds_currency.value < action.currency_cost then
         world:emit("ran_out_of_currency", { team = options.team })
         return

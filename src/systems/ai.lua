@@ -29,7 +29,7 @@ end
 
 function AiSystem:getFreeSpawnHex(team)
   local teamHexes = functional.filter(self.spawn_hexes, function(hex)
-    return hex.spawn_hex.team == team
+    return hex.spawn_hex:fetch(self:getWorld()) == team
   end)
 
   return table.pick_random(teamHexes)
@@ -37,7 +37,7 @@ end
 
 function AiSystem:getTeamEntities(team)
   return functional.filter(self.in_team, function(entity)
-    if entity.is_in_team:fetch(self:getWorld()) == team then
+    if entity.is_in_team:fetch(self:getWorld()) == team and not entity.base then
       return true
     end
   end)
