@@ -46,7 +46,10 @@ function AiSystem:copy_world()
 end
 
 function AiSystem:getViableMovesForCharacter(character)
-  --local hexesWithinRadius = Gamestate.h
+  local hexesWithinRadius = self:getWorld():getResource("map"):getHexesInRadius(character.is_in_hex:fetch(self:getWorld()), character.movement_range.value)
+  for _, hex in ipairs(hexesWithinRadius) do
+    print("HEX", hex.coordinates.q, hex.coordinates.r)
+  end
 end
 
 function AiSystem:getFreeSpawnHex(team)

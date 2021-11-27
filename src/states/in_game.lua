@@ -85,11 +85,11 @@ function in_game:key_pressed(key, scancode, isrepeat)
     love.filesystem.write("save_file", serpent.block(data))
   end
 
-  if key == 'f9' then
-    local dataString = love.filesystem.read("save_file")
-    local _, data = serpent.load(dataString)
-    self.world:deserialize(data, true)
-  end
+  -- if key == 'f9' then
+  --   local dataString = love.filesystem.read("save_file")
+  --   local _, data = serpent.load(dataString)
+  --   self.world:deserialize(data, true)
+  -- end
 end
 
 function in_game:mouse_moved(x, y)

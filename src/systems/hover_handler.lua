@@ -16,6 +16,7 @@ function HoverHandlerSystem:update()
     --hex.selected = true
     self:getWorld():emit("hex_hovered", hex)
   end
+
 end
 
 return HoverHandlerSystem

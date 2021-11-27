@@ -243,6 +243,54 @@ local Map = Class {
     return distance
   end,
 
+  __hexAdd = function(self, a, b)
+    return Hex(a.coordinates.q + b.coordinates.q, a.coordinates.r + b.coordinates.r)
+  end,
+
+  __hexScale = function(self, hex, k)
+    return Hex(hex.coordinates.q * k, hex.coordinates.r * k)
+  end,
+
+  __hexNeigbor = function(self, hex, direction)
+    return self:__hexAdd(hex, neighbor_directions[direction])
+  end,
+
+  getHexRing = function(self, hex, radius)
+    local hexes = {}
+    local currentHex = self:__hexAdd(hex, self:__hexScale(neighbor_directions[5], radius))
+
+    for i=1,6 do
+      for j=0,radius-1 do
+        table.insert(hexes, currentHex)
+        if currentHex then
+          currentHex = self:__hexNeigbor(currentHex, i)
+        end
+      end
+    end
+
+    local mapHexes = {}
+    for _, hex in ipairs(hexes) do
+      local mapHex = self:getHex(hex.coordinates.q, hex.coordinates.r)
+      if mapHex then
+        table.insert(mapHexes, mapHex)
+      end
+    end
+
+    return mapHexes
+  end,
+
+  getHexesInRadius = function(self, hex, radius)
+    local hexes = {}
+    for i=1,radius do
+      local ringHexes = self:getHexRing(hex, i)
+      for _, ringHex in ipairs(ringHexes) do
+        table.insert(hexes, ringHex)
+      end
+    end
+
+    return hexes
+  end,
+
   reflectHexR = reflectR,
   reflectHexUp = reflectUp,
 
